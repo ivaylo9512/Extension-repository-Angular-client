@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http'
 
-interface User{
+export interface User{
   id : number,
   username : string,
   extensions : any[],
@@ -12,6 +12,14 @@ interface User{
   country : string,
   info : string,
   totalExtensions : number
+}
+
+export interface Github{
+  id: number,
+  rate: number,
+  wait: number,
+  git_token: string,
+  git_username: string
 }
 
 @Injectable({
@@ -31,7 +39,7 @@ export class UserService {
   }
 
   getGithubSettings(){
-    return this.httpClient.get('/api/github/auth')
+    return this.httpClient.get<Github>('/api/github/auth/getSettings')
   }
 
   setGithubSettings(github){

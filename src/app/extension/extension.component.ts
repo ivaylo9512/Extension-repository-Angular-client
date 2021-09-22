@@ -54,13 +54,7 @@ export class ExtensionComponent implements OnInit {
   }
 
   setFeatureState(){
-    let state : string
-    if(this.extension.featured){
-      state = 'unfeature'
-    }else{
-      state = 'feature'
-    }
-    this.extensionService.setFeatureState(this.extension.id, state).subscribe(data =>{
+    this.extensionService.setFeatureState(this.extension.id, this.extension.featured ? 'unfeature' : 'feature').subscribe(data =>{
       this.extension.featured = data['featured']
     })
   }
@@ -72,13 +66,7 @@ export class ExtensionComponent implements OnInit {
   }
 
   setPublishState(){
-    let state : string
-    if(this.extension.pending){
-      state = 'publish'
-    }else{
-      state = 'unpublish'
-    }
-    this.extensionService.setPublishState(this.extension.id,state).subscribe(data =>
+    this.extensionService.setPublishState(this.extension.id, this.extension.pending ? 'publish' : 'unpublish').subscribe(data =>
       this.extension.pending = data['pending']
     )
   }

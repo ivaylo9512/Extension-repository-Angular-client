@@ -1,12 +1,12 @@
 <section mouseWheel>
-    <div class="cover" [ngStyle]="{'background-image':'url(' + baseUrl + 'api/download/' + extension.coverLocation + ')'}" *ngIf="extension.coverLocation && !wheelDirective.isMobile">
+    <div class="cover" [ngStyle]="{'background-image':'url(' + baseUrl + 'api/files/download/' + extension.coverName + ')'}" *ngIf="extension.coverName && !wheelDirective.isMobile">
     </div>
     <div #extensionSection [ngClass]="{'visible': !this.wheelDirective.extensionComponent.isCoverPresent, 'fade-in': this.wheelDirective.extensionComponent.currentSection != 'coverSection' }" class="extension-info">
         <div class="logo-container">
             <div class="hover-circle">
             </div>
             <div class="logo-box">
-                <img class="logo" [src]="baseUrl + 'api/download/' + extension.imageLocation" *ngIf="extension.imageLocation"/>
+                <img class="logo" [src]="baseUrl + 'api/files/download/' + extension.imageName" *ngIf="extension.imageName"/>
             </div>
         </div>
         <div class="extension-info-container">
