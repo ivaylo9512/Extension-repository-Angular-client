@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChildren, ElementRef, QueryList, ViewChild, ChangeDetectorRef, HostListener} from '@angular/core';
-import { UserService } from '../services/user.service'
+import { UserService, User } from '../services/user.service'
+import { ExtensionsService, Extension } from '../services/extensions.service'
 import { ActivatedRoute } from '@angular/router';
 import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
 import { environment } from '../../environments/environment';
@@ -17,7 +18,8 @@ export class ProfileComponent implements OnInit {
   }
 
   loggedUser: any
-  user: any
+  user: User
+  extensions: Extension[]
   admin: boolean
   homeComponent: boolean
   baseUrl: string
@@ -38,9 +40,10 @@ export class ProfileComponent implements OnInit {
     totalItems: null
   }
 
-  constructor(private wheelDirective: MouseWheelDirective, private userService: UserService, private route: ActivatedRoute, private cdRef: ChangeDetectorRef) {
-    this.user = 'loading'
+
+  constructor(private wheelDirective: MouseWheelDirective, private userService: UserService, private extensionsService: ExtensionsService, private route: ActivatedRoute, private cdRef: ChangeDetectorRef) {
     this.baseUrl = environment.baseUrl
+
   }
 
   ngOnInit() {
@@ -63,6 +66,7 @@ export class ProfileComponent implements OnInit {
 
     }
   }
+
   fixOverflow(node){  
     let height = node.nativeElement.offsetHeight
     let scrollHeight = node.nativeElement.scrollHeight
@@ -96,7 +100,7 @@ export class ProfileComponent implements OnInit {
   handleExtensionsDescription(descriptions){
     this.extensionsContainer.nativeElement.style.display = "block"
     descriptions.forEach((description, i) => {
-      description.nativeElement.innerHTML = this.user.extensions[i].description
+      description.nativeElement.innerHTML = this.extensions[i].description
       this.fixOverflow(description)
     })
     if(this.homeComponent && !this.wheelDirective.profileComponent.display){
@@ -114,8 +118,31 @@ export class ProfileComponent implements OnInit {
   getUser(id: number){
     this.userService.getUser(id).subscribe(data => {
       this.user = data
-      this.user.rating = this.user.rating.toFixed(2)
-      this.config.totalItems = data.totalExtensions
+      this.user.rating = +this.user.rating.toFixed(2)
+      
+      this.extensionsService.findUserExtensions(this.config.itemsPerPage).subscribe(page => {
+        this.extensions = page.data
+        this.user.extensions = page.data
+        this.config.totalItems = page.totalResults
+      })
     })
+  }
+
+  changePage(page: number){
+    const length = this.user.extensions.length
+    const itemsPerPage = this.config.itemsPerPage;
+    const userExtensions = this.user.extensions;
+
+    if(length <= (page - 1) * itemsPerPage){
+      this.extensionsService.findUserExtensions(itemsPerPage * (page - length / itemsPerPage), userExtensions[length - 1].id).subscribe(pageData => {
+        this.config.totalItems = userExtensions.length + pageData.totalResults
+        userExtensions.push(...pageData.data)
+        this.extensions = userExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+        this.config.currentPage = page;
+      })
+    }else{
+      this.extensions = userExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+      this.config.currentPage = page;
+    }
   }
 }

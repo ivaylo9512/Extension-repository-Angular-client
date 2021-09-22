@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-interface Extension {
+export interface Extension {
   id: number,
   name: string,
   version: string,
@@ -27,12 +27,17 @@ interface Extension {
   rating: number,
   timesRated: number,
   currentUserRatingValue: number
-
-
 }
+
+interface Page {
+  data: Extension[],
+  totalResults: number
+}
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class ExtensionsService {
   currentExtension : Extension
   
@@ -40,18 +45,22 @@ export class ExtensionsService {
     this.currentExtension = undefined
   }
 
+  findUserExtensions(pageSize : number, lastId? : number){
+    return this.httpClient.get<Page>(`/api/extensions/auth/findUserExtensions/${pageSize}/${lastId ? lastId : ''}`)
+  }
+  findPendings(pageSize : number, lastId? : number){
+    return this.httpClient.get<Page>(`/api/extensions/auth/findPending/true/${pageSize}/${lastId ? lastId : ''}`)
+  }
+  findByTag(name : string, pageSize : number, lastId? : number){
+    return this.httpClient.get<any>(`/api/extensions/findByTag/${name}/${pageSize}/${lastId ? lastId : ''}`)
+  }
   getFeatured(){
     return this.httpClient.get<Extension[]>('/api/extensions/featured')
   }
   getExtension(id : number){
     return this.httpClient.get<Extension>(`/api/extensions/${id}`)
   }
-  getPendings(){
-    return this.httpClient.get<Extension[]>('/api/extensions/auth/unpublished')
-  }
-  getByTag(tag : string){
-    return this.httpClient.get<any>(`/api/tag/${tag}`)
-  }
+
   editExtension(id : number, formData){
     return this.httpClient.post<Extension>(`/api/extensions/auth/edit`, formData)
   }

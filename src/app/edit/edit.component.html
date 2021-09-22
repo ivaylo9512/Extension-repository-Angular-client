@@ -14,7 +14,7 @@
             </label>
         </div>  
         <div class="cover"> 
-            <div [ngStyle]="{'background-image':'url(' + baseUrl + 'api/download/' + coverURL + ')'}" *ngIf="coverURL"></div>
+            <div [ngStyle]="{'background-image':'url(' + baseUrl + 'api/files/download/' + coverURL + ')'}" *ngIf="coverURL"></div>
         </div>
     </section>
     <section class="extension-section"> 
@@ -28,7 +28,7 @@
                     <div class="hover-circle"></div>
                 </div>
                 <div class="info-box">
-                    <img class="logo-box" [src]="baseUrl + 'api/download/' + logoURL" *ngIf="logoURL"/>           
+                    <img class="logo-box" [src]="baseUrl + 'api/files/download/' + logoURL" *ngIf="logoURL"/>           
                 </div>
                 <div class="submit-menu">
                     <input name="file" (change)="addFile($event)" type="file" id="file" ngModel required>

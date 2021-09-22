@@ -55,10 +55,10 @@ export class DiscoverComponent implements OnInit {
   }
 
   findExtensions(page: number){
-    this.extensionsService.getExtensions(this.config.search, this.config.criteria, (page - 1).toString() , this.config.itemsPerPage.toString()).subscribe(data => {
-      this.extensions = data['extensions']
+    this.extensionsService.getExtensions(this.config.search, this.config.criteria, (page - 1).toString() , this.config.itemsPerPage.toString()).subscribe(page => {
+      this.extensions = page.data
       this.config.currentPage = page
-      this.config.totalItems = data['totalResults']
+      this.config.totalItems = page.totalResults
       this.wheelDirective.calculateScrollAmount()
     })
   

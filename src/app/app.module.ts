@@ -7,7 +7,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http'
 import { RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component'
 import { RequestsInterceptor } from './helpers/requests-interceptor'
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProfileComponent } from './profile/profile.component';
 import { ExtensionComponent } from './extension/extension.component';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -15,7 +15,6 @@ import { DiscoverComponent } from './discover/discover.component';
 import { PendingsComponent } from './pendings/pendings.component';
 import { AdminComponent } from './admin/admin.component';
 import { CreateComponent } from './create/create.component';
-import { ReactiveFormsModule } from '@angular/forms';
 import { EditComponent } from './edit/edit.component';
 import { HeaderComponent } from './header/header.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -24,6 +23,7 @@ import { RegisterComponent } from './register/register.component';
 import { MouseWheelDirective } from './helpers/mouse-wheel.directive';
 import { FavExtensionsComponent } from './fav-extensions/fav-extensions.component';
 import { AuthGuard } from './helpers/auth.guard';
+
 @NgModule({
   declarations: [
     AppComponent,

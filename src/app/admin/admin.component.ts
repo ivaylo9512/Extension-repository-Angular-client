@@ -15,7 +15,6 @@ export class AdminComponent implements OnInit {
   githubSettings : FormGroup
 
   config = {
-    id: 'custom',
     itemsPerPage: 15,
     currentPage: 1,
     totalItems: null
@@ -59,7 +58,10 @@ export class AdminComponent implements OnInit {
   }
 
   getGithubSettings(){
-    this.userService.getGithubSettings().subscribe(data => this.githubSettings.setValue(data))
+    this.userService.getGithubSettings().subscribe(data => {
+      const {id, ...githubSettings} = data
+      this.githubSettings.setValue(githubSettings)
+    })
   }
 
   changeCriteria(value){

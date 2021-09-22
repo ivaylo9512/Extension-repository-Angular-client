@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChildren, QueryList, HostListener, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { ExtensionsService } from '../services/extensions.service';
+import { ExtensionsService, Extension } from '../services/extensions.service';
 import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
 import { Subscription } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
@@ -18,19 +18,18 @@ export class PendingsComponent implements OnInit {
   @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<any>
   @ViewChild(MouseWheelDirective) wheelDirective: MouseWheelDirective
 
-  extensions: any[]
+  totalExtensions: Extension[]
+  extensions: Extension[]
   routeSubscription: Subscription
   baseUrl: string
 
   config = {
-    id: 'custom',
     itemsPerPage: 12,
     currentPage: 1,
-    totalItems: null
+    totalItems: 0
   }
 
   constructor(private extensionsService: ExtensionsService, private cdRef: ChangeDetectorRef, private router: Router) { 
-    this.extensions = undefined
     this.baseUrl = environment.baseUrl
   }
 
@@ -60,10 +59,31 @@ export class PendingsComponent implements OnInit {
   }
 
   findPendings(){
-    this.extensionsService.getPendings().subscribe(data => {
-      this.extensions = data
-      this.config.totalItems = this.extensions.length
+    this.extensionsService.findPendings(this.config.itemsPerPage).subscribe(page => {
+      this.totalExtensions = page.data
+      this.extensions = page.data
+      this.config.totalItems = page.totalResults
     })
+  }
+
+  changePage(page: number){
+    const length = this.totalExtensions.length
+    const itemsPerPage = this.config.itemsPerPage;
+
+    if(length <= (page - 1) * itemsPerPage){
+      this.extensionsService.findPendings(itemsPerPage * (page - length / itemsPerPage), this.totalExtensions[length - 1].id).subscribe(pageData => {
+
+        this.config.totalItems = this.totalExtensions.length + pageData.totalResults
+        this.totalExtensions.push(...pageData.data)
+        this.extensions = this.totalExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+        this.config.currentPage = page;
+        this.wheelDirective.calculateScrollAmount()
+      })
+    }else{
+      this.extensions = this.totalExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+      this.config.currentPage = page;
+      this.wheelDirective.calculateScrollAmount()
+    }
   }
 
   fixOverflow(descriptions){
@@ -85,10 +105,5 @@ export class PendingsComponent implements OnInit {
         scrollHeight = description.nativeElement.scrollHeight
       }
     })
-  }
-
-  changePage(page){
-    this.config.currentPage = page
-    this.wheelDirective.calculateScrollAmount()
   }
 }
