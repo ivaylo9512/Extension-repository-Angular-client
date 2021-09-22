@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChildren, QueryList, HostListener, ViewChild } from '@angular/core';
-import { ExtensionsService } from '../services/extensions.service';
+import { ExtensionsService, Extension } from '../services/extensions.service';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
 import { Subscription } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-tags',
@@ -18,19 +19,20 @@ export class TagsComponent implements OnInit {
   @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<any>
   @ViewChild(MouseWheelDirective) wheelDirective: MouseWheelDirective
 
-  extensions: any[]
+  totalExtensions: Extension[]
+  extensions: Extension[]
   tag: string
   routeSubscription: Subscription
+  baseUrl: string
 
   config = {
-    id: 'custom',
     itemsPerPage: 12,
     currentPage: 1,
-    totalItems: null
+    totalItems: 0
   }
 
-  constructor(private extensionService: ExtensionsService, private route: ActivatedRoute, private router: Router) { 
-    this.extensions = undefined
+  constructor(private extensionsService: ExtensionsService, private route: ActivatedRoute, private router: Router) { 
+    this.baseUrl = environment.baseUrl
   }
 
   ngOnInit() {
@@ -58,9 +60,10 @@ export class TagsComponent implements OnInit {
   }
 
   findByTag(tag: string){
-    this.extensionService.getByTag(tag).subscribe(tagDto =>{
-      this.extensions = tagDto['extensions']
-      this.config.totalItems = tagDto['totalExtensions']
+    this.extensionsService.findByTag(tag, this.config.itemsPerPage).subscribe(page =>{
+      this.extensions = page.data
+      this.totalExtensions = page.data
+      this.config.totalItems = page.totalResults
     })
   }
 
@@ -86,7 +89,21 @@ export class TagsComponent implements OnInit {
   }
 
   changePage(page){
-    this.config.currentPage = page
-    this.wheelDirective.calculateScrollAmount()
+    const length = this.totalExtensions.length
+    const itemsPerPage = this.config.itemsPerPage;
+
+    if(length <= (page - 1) * itemsPerPage){
+      this.extensionsService.findByTag(this.tag, itemsPerPage * (page - length / itemsPerPage), this.totalExtensions[length - 1].id).subscribe(pageData => {
+        this.config.totalItems = this.totalExtensions.length + pageData.totalResults
+        this.totalExtensions.push(...pageData.data)
+        this.extensions = this.totalExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+        this.config.currentPage = page;
+        this.wheelDirective.calculateScrollAmount()
+      })
+    }else{
+      this.extensions = this.totalExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+      this.config.currentPage = page;
+      this.wheelDirective.calculateScrollAmount()
+    }
   }
 }
