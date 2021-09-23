@@ -5,7 +5,7 @@ export interface User{
   id : number,
   username : string,
   extensions : any[],
-  isActive : boolean,
+  active : boolean,
   rating : number,
   extensionsRated : number,
   profileImage : string,
@@ -14,12 +14,17 @@ export interface User{
   totalExtensions : number
 }
 
-export interface Github{
+export interface Settings{
   id: number,
   rate: number,
   wait: number,
   git_token: string,
   git_username: string
+}
+
+interface Page {
+  data: User[],
+  totalResults: number
 }
 
 @Injectable({
@@ -33,21 +38,32 @@ export class UserService {
     return this.httpClient.get<User>(`/api/users/findById/${id}`)
   }
 
-  getAllByState(state : string){
-    const params = new  HttpParams().set('state', state)    
-    return this.httpClient.get<User[]>('/api/users/auth/all', {params})
+  findAll(pageSize : number, name : string, isActive? : boolean, lastName? : string){
+    let params = new HttpParams()
+      .set('pageSize', pageSize.toString())
+      .set('name', name);
+
+      if(isActive != undefined){
+        params = params.set('isActive', isActive.toString())
+      }
+
+      if(lastName){
+        params = params.set('lastName', lastName)
+      }
+
+    return this.httpClient.get<Page>(`/api/users/auth/findAll`, { params })
   }
 
   getGithubSettings(){
-    return this.httpClient.get<Github>('/api/github/auth/getSettings')
+    return this.httpClient.get<Settings>('/api/github/auth/getSettings')
   }
 
   setGithubSettings(github){
     return this.httpClient.post('/api/github/auth', github)
   }
 
-  setState(id : number, state : string){
-    return this.httpClient.patch<User>(`/api/users/auth/setState/${id}/${state}`, null)
+  setActive(id : number, isActive : boolean){
+    return this.httpClient.patch<User>(`/api/users/auth/setActive/${id}/${isActive}`, null)
   }
 
   changePassword(password : string, repeatPassword : string){
