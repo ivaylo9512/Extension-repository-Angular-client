@@ -15,21 +15,20 @@ export class AdminComponent implements OnInit {
   githubSettings : FormGroup
 
   config = {
-    itemsPerPage: 15,
+    itemsPerPage: 16,
     currentPage: 1,
     totalItems: null
   }
+
   github : any
+  totalUsers : any[]
   users : any[]
-  foundUsers : any[]
   search: FormControl
   baseUrl: string
+  isActive?: boolean
 
   constructor(private userService : UserService, private fb: FormBuilder) {
-    this.users = undefined
-    this.foundUsers = undefined
-    this.github = undefined
-    this.search = new FormControl()
+    this.search = new FormControl('')
     this.baseUrl = environment.baseUrl
 
     this.githubSettings = this.fb.group({
@@ -41,16 +40,11 @@ export class AdminComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getUsers('all')
+    this.getUsers()
     this.getGithubSettings()
 
-    this.search.valueChanges.pipe(debounceTime(200)).subscribe(result => this.findUsers(result))
+    this.search.valueChanges.pipe(debounceTime(200)).subscribe(result => this.getUsers())
     
-  }
-
-  findUsers(result : string){
-    this.users = this.foundUsers.filter(user => user.username.toLowerCase().startsWith(result.toLowerCase()))
-    this.config.totalItems = this.users.length
   }
 
   setGithubSettings(){
@@ -64,23 +58,41 @@ export class AdminComponent implements OnInit {
     })
   }
 
-  changeCriteria(value){
-    this.getUsers(value.target.value)
+  changeCriteria(value? : boolean){
+    this.isActive = value;
+    this.getUsers()
   }
 
-  getUsers(state : string){
-    this.userService.getAllByState(state).subscribe(data =>{
-      this.users = data
-      this.foundUsers = data
-      this.config.totalItems = data.length
+  changePage(page: number){
+    const length = this.totalUsers.length
+    const itemsPerPage = this.config.itemsPerPage;
+    const users = this.totalUsers;
+
+    if(length <= (page - 1) * itemsPerPage){
+      this.userService.findAll(itemsPerPage * (page - length / itemsPerPage), this.search.value, this.isActive, users[length - 1].username).subscribe(pageData => {
+        this.config.totalItems = users.length + pageData.totalResults
+        users.push(...pageData.data)
+        this.users = users.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+        this.config.currentPage = page;
+      })
+    }else{
+      this.users = users.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+      this.config.currentPage = page;
+    }
+  }
+
+  getUsers(){
+    this.userService.findAll(this.config.itemsPerPage, this.search.value, this.isActive).subscribe(page =>{
+      this.users = page.data
+      this.totalUsers = page.data
+      this.config.totalItems = page.totalResults
     })
   }
 
-  setState(user, e){
+  setActive(user, e){
     e.stopPropagation()
-    const state = user.isActive ? 'block' : 'enable'
-    this.userService.setState(user.id, state).subscribe(data =>{
-      user.isActive = data.isActive
+    this.userService.setActive(user.id, !user.active).subscribe(data =>{
+      user.active = data.active
     })
   }
   

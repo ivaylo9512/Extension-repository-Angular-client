@@ -7,11 +7,11 @@
     <div class="menu">
         <ul>
             <label>Find by:</label>
-            <input checked name="find" value="all" id="all" type="radio" (click)="changeCriteria($event)">
+            <input checked name="find" value="all" id="all" type="radio" (click)="changeCriteria(null)">
             <label for="all"><i class="fa fa-i-cursor"></i>All</label>
-            <input name="find" value="active" id="active" type="radio" (click)="changeCriteria($event)">
+            <input name="find" value="active" id="active" type="radio" (click)="changeCriteria(true)">
             <label for="active" type='radio'><i class="fa fa-fire"></i>Active</label>
-            <input name="find" value="blocked" id="blocked" type="radio" (click)="changeCriteria($event)">                
+            <input name="find" value="blocked" id="blocked" type="radio" (click)="changeCriteria(false)">                
             <label for="blocked" type='radio'><i class="fas fa-calendar-alt"></i>Blocked</label>
             <label>Users found: {{config.totalItems}}</label>
         </ul>
@@ -47,9 +47,9 @@
                             {{user.username}}
                         </b>
                         <div class="state">
-                            <button (click)="setState(user, $event)">
-                                <i *ngIf="user.isActive" class="fas fa-times-circle"></i>
-                                <i *ngIf="!user.isActive" class="fas fa-check-circle"></i>
+                            <button (click)="setActive(user, $event)">
+                                <i *ngIf="user.active" class="fas fa-times-circle"></i>
+                                <i *ngIf="!user.active" class="fas fa-check-circle"></i>
                             </button>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
         </div>
     </div>
     <div class="pagination" *ngIf="users">
-        <pagination-template #p="paginationApi" [id]="config.id" (pageChange)="this.config.currentPage = $event">
+        <pagination-template #p="paginationApi" [id]="config.id" (pageChange)="changePage($event)">
             <ul class="pagination-list">
                 <li class="previous" [class.disabled]="p.isFirstPage()">
                     <a  *ngIf="!p.isFirstPage()" (click)="p.previous()">
