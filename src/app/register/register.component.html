@@ -1,34 +1,41 @@
 <section>
     <span class="circle"></span>
-    <form #userForm="ngForm" autocomplete="on">
-        <div class="inputs-container" [ngStyle]="{'display' : next ? 'none' : 'block'}">
-            <div>  
-                <i class="fas fa-user"></i>
-                <input name="username" type="text" placeholder="username" ngModel required autocomplete="username">
+    <div class="container">
+        <form #userForm="ngForm" (ngSubmit)="next = true" ngNativeValidate autocomplete="on" [ngStyle]="{'display' : next ? 'none' : 'block'}">
+            <div class="inputs-container">
+                <div>  
+                    <i class="fas fa-user"></i>
+                    <input name="username" type="text" required placeholder="username" ngModel required autocomplete="username">
+                </div>
+                <div class="logo">  
+                    <i class="fas fa-image"></i>
+                    <label for="logo">{{filePlaceholder}}</label>
+                    <input (change)="addLogo($event)" placeholder="logo" name="logo" id="logo" type="file">
+                </div>
+            </div> 
+            <div class="buttons-container">
+                <button type="submit">next</button>
+                <button type="button" routerLink="/login">login</button>
             </div>
-            <div>  
-                <i class="fas fa-image"></i>
-                <label for="logo"></label>
-                <input class="logo" (change)="addLogo($event)" name="logo" id="logo" type="file">
+        </form>
+        <form #userForm="ngForm" (ngSubmit)="register(userForm)" ngNativeValidate autocomplete="on" [ngStyle]="{'display' : next ? 'block' : 'none'}">
+            <div class="inputs-container">
+                <div>  
+                    <i class="fas fa-key"></i>
+                    <input name="password" type="password" placeholder="password" ngModel required autocomplete="password">
+                </div>
+                <div>  
+                    <i class="fas fa-key"></i>
+                    <input name="repeat-password" type="password" placeholder="repeat" ngModel required autocomplete="password">
+                </div>
+            </div>   
+            <div class="buttons-container">
+                <button type="submit" (click)=register(userForm)>register</button>
+                <button type="button" routerLink="/login">login</button>
             </div>
-        </div> 
-        <div class="inputs-container" (ngSubmit)="register(userForm)" [ngStyle]="{'display' : next ? 'block' : 'none'}">
-            <div>  
-                <i class="fas fa-key"></i>
-                <input name="password" type="password" placeholder="password" ngModel required autocomplete="password">
-            </div>
-            <div>  
-                <i class="fas fa-key"></i>
-                <input name="repeat-password" type="password" placeholder="repeat" ngModel required autocomplete="password">
-            </div>
-        </div>   
-        <div class="buttons-container">
-            <button [ngStyle]="{'display' : !next ? 'inline-block' : 'none'}" (click)="next = true">next</button>
-            <button type="submit" [ngStyle]="{'display' : !next ? 'none' : 'inline-block'}" (click)=register(userForm)>register</button>
-            <button type="button" routerLink="/login">login</button>
-        </div>
+        </form>
         <span class="circle2"></span>
-    </form>
+    </div>
     <div class="errors" *ngIf="errors">
         <div>
             <b *ngFor="let error of errors"><i class="fas fa-exclamation-triangle"></i>{{error.code}}</b>

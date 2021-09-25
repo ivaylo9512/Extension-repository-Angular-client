@@ -15,6 +15,8 @@ export class RegisterComponent implements OnInit {
   formData : FormData
   errors : any[]
   next : boolean
+  filePlaceholder = 'logo'
+
   constructor(private authService : AuthService ,private userService : UserService, private router : Router) {
     this.formData = new FormData()
     this.next = false
@@ -24,6 +26,7 @@ export class RegisterComponent implements OnInit {
 
   addLogo(e){
     const logo = e.target.files[0]
+    this.filePlaceholder = logo.name
     this.formData.set('image', logo)
   }
 
