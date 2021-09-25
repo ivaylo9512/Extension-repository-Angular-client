@@ -54,7 +54,7 @@ export class ExtensionComponent implements OnInit {
   }
 
   setFeatureState(){
-    this.extensionService.setFeatureState(this.extension.id, this.extension.featured ? 'unfeature' : 'feature').subscribe(data =>{
+    this.extensionService.setFeatured(this.extension.id, this.extension.featured!).subscribe(data =>{
       this.extension.featured = data['featured']
     })
   }
@@ -66,7 +66,7 @@ export class ExtensionComponent implements OnInit {
   }
 
   setPublishState(){
-    this.extensionService.setPublishState(this.extension.id, this.extension.pending ? 'publish' : 'unpublish').subscribe(data =>
+    this.extensionService.setPending(this.extension.id, this.extension.pending!).subscribe(data =>
       this.extension.pending = data['pending']
     )
   }
@@ -82,7 +82,7 @@ export class ExtensionComponent implements OnInit {
     })
   }
 
-  rateExtension(userRating : string){
+  rateExtension(userRating : number){
     this.extensionService.rateExtension(this.extension.id, userRating).subscribe(extensionRating =>{
       this.extension.rating = extensionRating
       this.extension.currentUserRatingValue = userRating

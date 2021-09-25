@@ -19,10 +19,11 @@ form{
 }
 input{
     border: 0px;
-    width: 85%;
+    width: 100%;
     height: 100%;
     padding-left: 8px;
     background: transparent;
+    border-radius: 0 16px 16px 0;
 }
 i{
     padding: 0 3px;
@@ -86,6 +87,7 @@ form span{
     text-align: center;
     margin-top: 15px;
     color: red;
+    font-weight: bold;
 }
 .circle{
     width: 30%;
