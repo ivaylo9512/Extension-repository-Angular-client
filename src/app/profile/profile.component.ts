@@ -16,7 +16,6 @@ export class ProfileComponent implements OnInit {
   @ViewChild(MouseWheelDirective) wheelDirective: MouseWheelDirective
  
   onResize() {
-    this.handleExtensionsDescription(this.extensionDescriptions)
     this.handleUserInfo(this.userInfo)
   }
 
@@ -31,20 +30,10 @@ export class ProfileComponent implements OnInit {
   @ViewChildren('userInfo') userInfo: QueryList<any>
   @ViewChild('extensionsContainer') extensionsContainer: ElementRef
   @ViewChild('profileSection') profileSection: ElementRef
-  
-  homeAnimation = {
-    diplay : false,
-    animate : false
-
-  }
-  config = {
-    itemsPerPage: 8,
-    currentPage: 1,
-    totalItems: null
-  }
 
   constructor(private userService: UserService, private extensionsService: ExtensionsService, private route: ActivatedRoute, private cdRef: ChangeDetectorRef, private profileAnimationService: ProfileAnimationService) {
     this.baseUrl = environment.baseUrl
+    this.extensionsService.config.itemsPerPage = 8
   }
 
   ngOnInit() {
@@ -78,24 +67,10 @@ export class ProfileComponent implements OnInit {
   
   ngAfterViewInit() {
     this.wheelDirective.profileComponent.profileHeight = this.profileSection.nativeElement.offsetHeight
-    this.extensionDescriptions.changes.subscribe(descriptions => {
-      this.handleExtensionsDescription(descriptions.toArray())
-    })
     this.userInfo.changes.subscribe(info => 
       this.handleUserInfo(info.toArray())
     )
     this.cdRef.detectChanges()
-  }
-
-  handleExtensionsDescription(descriptions){
-    this.extensionsContainer.nativeElement.style.display = "block"
-    descriptions.forEach((description, i) => {
-      description.nativeElement.innerHTML = this.extensions[i].description
-      this.fixOverflow(description)
-    })
-    if(this.homeComponent && !this.profileAnimationService.isDisplayed){
-      this.extensionsContainer.nativeElement.style.display = "none"        
-    }
   }
 
   handleUserInfo(info){
@@ -110,29 +85,7 @@ export class ProfileComponent implements OnInit {
       this.user = data
       this.user.rating = +this.user.rating.toFixed(2)
       
-      this.extensionsService.findUserExtensions(this.config.itemsPerPage).subscribe(page => {
-        this.extensions = page.data
-        this.user.extensions = page.data
-        this.config.totalItems = page.totalResults
-      })
+      this.extensionsService.getUserExtensions()
     })
-  }
-
-  changePage(page: number){
-    const length = this.user.extensions.length
-    const itemsPerPage = this.config.itemsPerPage;
-    const userExtensions = this.user.extensions;
-
-    if(length <= (page - 1) * itemsPerPage){
-      this.extensionsService.findUserExtensions(itemsPerPage * (page - length / itemsPerPage), userExtensions[length - 1].id).subscribe(pageData => {
-        this.config.totalItems = userExtensions.length + pageData.totalResults
-        userExtensions.push(...pageData.data)
-        this.extensions = userExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-        this.config.currentPage = page;
-      })
-    }else{
-      this.extensions = userExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-      this.config.currentPage = page;
-    }
   }
 }

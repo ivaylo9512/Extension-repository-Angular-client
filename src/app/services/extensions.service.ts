@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Subscription } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 export interface Extension {
   id: number,
@@ -45,9 +47,55 @@ interface Page {
 
 export class ExtensionsService {
   currentExtension : Extension
+
+  totalExtensions : Extension[]
+  currentExtensions : Extension[]
+
+  nameQuery : string
+  routeSubscription : Subscription
+
+  config = {
+    itemsPerPage: 8,
+    currentPage: 1,
+    totalItems: null
+  }
   
-  constructor(private httpClient : HttpClient) { 
-    this.currentExtension = undefined
+  constructor(private httpClient : HttpClient, private route: ActivatedRoute) { 
+  }
+
+  getNextExtensions(page : number){
+    const component = this.route.component['name']
+    switch(component){
+      case 'ProfileCon' :
+      case 'HomeComponent' :
+        this.getNextUserExtensions(page)
+
+    }
+  }
+
+  getUserExtensions(){
+    this.findUserExtensions(this.config.itemsPerPage).subscribe(page => {
+      this.totalExtensions = this.currentExtensions = page.data
+      this.config.totalItems = page.totalResults
+    })
+  }
+
+  getNextUserExtensions(page : number){
+    const length = this.totalExtensions.length
+    const itemsPerPage = this.config.itemsPerPage;
+    const userExtensions = this.totalExtensions;
+  
+    if(length <= (page - 1) * itemsPerPage){
+      this.findUserExtensions(itemsPerPage * (page - length / itemsPerPage), userExtensions[length - 1].id).subscribe(pageData => {
+        this.config.totalItems = userExtensions.length + pageData.totalResults
+        userExtensions.push(...pageData.data)
+        this.currentExtensions = userExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+        this.config.currentPage = page;
+      })
+    }else{
+      this.currentExtensions = userExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+      this.config.currentPage = page;
+    }
   }
 
   findUserExtensions(pageSize : number, lastId? : number){
