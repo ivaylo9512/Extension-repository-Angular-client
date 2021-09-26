@@ -194,6 +194,7 @@
     position: relative;
     float: right;
     z-index: 5;
+    font-size: 1.2vh;
 }
 .user-info-container-mobile{
     display: none;
@@ -249,7 +250,7 @@
     text-decoration: underline;
 }
 .user-info{
-    height: 40%;
+    height: 30%;
 }
 .user-info p{
     width: 95%;

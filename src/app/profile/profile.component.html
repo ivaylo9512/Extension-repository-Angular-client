@@ -1,10 +1,10 @@
-<section [ngClass]="{'home-component' : homeComponent}" class="second-section" id="second-section">
-    <span *ngIf="!user" class="loading-animation">
+<section mouseWheel [ngClass]="{'home-component' : homeComponent}" class="second-section" id="second-section">
+    <span class="loading-animation">
         <div>
             <i class="fas fa-circle-notch fa-spin"></i>
         </div>
     </span>
-    <div [ngClass]="{'fade-in' : this.wheelDirective.profileComponent.animate, 'fade-out' : this.wheelDirective.profileComponent.animate === false}" class="profile-section" #profileSection>
+    <div [ngClass]="{'fade-in' : this.profileAnimationService.isAnimated, 'fade-out' : this.profileAnimationService.isAnimated === false}" class="profile-section" #profileSection>
         <div *ngIf="user" class="profile-container">
             <div class="user-info-container">
                 <div class="username">
@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="circle-container">
-                <span [ngClass]="{'animate' : wheelDirective.profileComponent.animate}" [ngStyle]="{'transform': wheelDirective.profileComponent.animate && !wheelDirective.isMobile ? 'translateY(' + wheelDirective.profileComponent.circleTransform / 5 + '%)' : wheelDirective.isMobile ? 'translateY(0)' : 'translateY(90%)'}" class="circle" id="circle"></span>
+                <span [ngClass]="{'animate' : profileAnimationService.isAnimated}" [ngStyle]="{'transform': profileAnimationService.isAnimated && !wheelDirective.isMobile ? 'translateY(' + profileAnimationService.circleTransform / 5 + '%)' : wheelDirective.isMobile ? 'translateY(0)' : 'translateY(90%)'}" class="circle" id="circle"></span>
             </div>
         </div>
         <div *ngIf="user" class="user-info-container-mobile">
@@ -51,7 +51,7 @@
             <i class="fas fa-info-circle"></i>
         </div>
     </div>
-    <div [ngStyle]="{'display' : wheelDirective.profileComponent.display ? 'block' : 'none'}" #extensionsContainer class="user-extensions" id="extensions-section">
+    <div [ngStyle]="{'display' : profileAnimationService.isDisplayed ? 'block' : 'none'}" #extensionsContainer class="user-extensions" id="extensions-section">
         <div class="extensions">
             <div class="info-container" *ngFor="let extension of extensions | paginate: config" [routerLink]="['/extension', extension.id]">
                 <div class="info-box">
@@ -85,10 +85,10 @@
                 </div>
             </div>
             <div class="circle-container">
-                <span [ngStyle]="{'transform': wheelDirective.profileComponent.animate ? 'translateY(' + wheelDirective.profileComponent.circleTransform * 2.5 + '%)' : 'translateY(90%)'}" class="circle" id="circle"></span>
+                <span [ngStyle]="{'transform': profileAnimationService.isAnimated ? 'translateY(' + profileAnimationService.circleTransform * 2.5 + '%)' : 'translateY(90%)'}" class="circle"></span>
             </div>
             <div class="circle-container">
-                <span [ngStyle]="{'transform': wheelDirective.profileComponent.animate ? 'translateY(' + wheelDirective.profileComponent.circleTransform * 6.5 + '%)' : 'translateY(0)'}" class="circle second" id="circle"></span>
+                <span [ngStyle]="{'transform': profileAnimationService.isAnimated ? 'translateY(' + profileAnimationService.circleTransform * 6.5 + '%)' : 'translateY(0)'}" class="circle second"></span>
             </div>
         </div>
        <pagination-template #p="paginationApi" [id]="config.id" (pageChange)="changePage($event)">

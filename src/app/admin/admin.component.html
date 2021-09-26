@@ -1,4 +1,9 @@
 <section>
+    <span *ngIf="!users" class="loading-animation">
+        <div>
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </div>
+    </span>
     <span class="circle first"></span>
     <form class="search">
         <input [formControl]="search">

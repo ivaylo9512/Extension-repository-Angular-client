@@ -1,13 +1,12 @@
 section{
-    padding-top: 30px;
-    height: calc(100vh - 30px);
-    width: 100%;
+    padding-top: 8vh;
     overflow-x: hidden;
     position: relative;
+    height: 100vh;
+    box-sizing: border-box;
 }
 .search{
     height: 16%;
-    margin-top: 20px;
     margin-left: 35px;
 }
 .search input{
