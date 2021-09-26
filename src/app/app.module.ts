@@ -94,14 +94,13 @@ import { AuthGuard } from './helpers/auth.guard';
         canActivate: [AuthGuard]
       },
       { 
+        path:'profile/:id', 
+        component: ProfileComponent,
+        runGuardsAndResolvers: 'always'
+      },
+      { 
         path: 'home', 
         component: HomeComponent,
-        children: [
-          {
-              path:'profile/:id',
-              component: ProfileComponent,
-          },
-        ],
         runGuardsAndResolvers: 'always'
       },
       { 

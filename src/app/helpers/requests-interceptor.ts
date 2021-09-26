@@ -22,13 +22,12 @@ export class RequestsInterceptor implements HttpInterceptor {
 
         request = request.clone({url : this.baseUrl + request.url})
         return next.handle(request).pipe(catchError(err => {
-            let error = err.error || err.statusText;
-            if(err.status == 401 && error == "Jwt token has expired."){
+            let message = err.error || err.statusText;
+            if(err.status == 401 && message == "Jwt token has expired."){
                 this.authService.logout()
                 return throwError("Session has expired. Log again." )
-            }else{
-                return throwError(error)
             }
+            return throwError(err)
         }))
     }
 }

@@ -4,6 +4,7 @@ import { ExtensionsService, Extension } from '../services/extensions.service'
 import { ActivatedRoute } from '@angular/router';
 import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
 import { environment } from '../../environments/environment';
+import { ProfileAnimationService } from '../services/profile.animation.service';
 
 @Component({
   selector: 'app-profile',
@@ -12,6 +13,8 @@ import { environment } from '../../environments/environment';
 })
 export class ProfileComponent implements OnInit {
   @HostListener('window:resize', ['$event'])
+  @ViewChild(MouseWheelDirective) wheelDirective: MouseWheelDirective
+ 
   onResize() {
     this.handleExtensionsDescription(this.extensionDescriptions)
     this.handleUserInfo(this.userInfo)
@@ -40,30 +43,19 @@ export class ProfileComponent implements OnInit {
     totalItems: null
   }
 
-
-  constructor(private wheelDirective: MouseWheelDirective, private userService: UserService, private extensionsService: ExtensionsService, private route: ActivatedRoute, private cdRef: ChangeDetectorRef) {
+  constructor(private userService: UserService, private extensionsService: ExtensionsService, private route: ActivatedRoute, private cdRef: ChangeDetectorRef, private profileAnimationService: ProfileAnimationService) {
     this.baseUrl = environment.baseUrl
-
   }
 
   ngOnInit() {
     this.homeComponent = this.route.component['name'] == 'HomeComponent'
     if(!this.homeComponent){
       this.getUser(+this.route.snapshot.paramMap.get('id'));
-      
-      this.wheelDirective.profileComponent.animate = true
-      this.wheelDirective.profileComponent.isHomeView = false
-      clearTimeout(this.wheelDirective.profileComponent.isFinished)
     }else{
       this.loggedUser = JSON.parse(localStorage.getItem('user'))
       if(this.loggedUser){
         this.getUser(this.loggedUser['id'])
       }
-      
-      this.wheelDirective.profileComponent.animate = undefined
-      this.wheelDirective.profileComponent.display = false
-      this.wheelDirective.profileComponent.isHomeView = true
-
     }
   }
 
@@ -88,12 +80,10 @@ export class ProfileComponent implements OnInit {
     this.wheelDirective.profileComponent.profileHeight = this.profileSection.nativeElement.offsetHeight
     this.extensionDescriptions.changes.subscribe(descriptions => {
       this.handleExtensionsDescription(descriptions.toArray())
-
     })
     this.userInfo.changes.subscribe(info => 
       this.handleUserInfo(info.toArray())
     )
-    this.wheelDirective.checkIfMobileScreen()
     this.cdRef.detectChanges()
   }
 
@@ -103,7 +93,7 @@ export class ProfileComponent implements OnInit {
       description.nativeElement.innerHTML = this.extensions[i].description
       this.fixOverflow(description)
     })
-    if(this.homeComponent && !this.wheelDirective.profileComponent.display){
+    if(this.homeComponent && !this.profileAnimationService.isDisplayed){
       this.extensionsContainer.nativeElement.style.display = "none"        
     }
   }
