@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserService } from '../services/user.service';
 import { NgForm } from '@angular/forms'
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { ElementRef } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 
 @Component({
@@ -11,15 +13,33 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
+  @ViewChild('password') 
+  password:ElementRef;
 
+  @ViewChild('repeatPassword') 
+  repeatPassword : ElementRef;
+  
+  errors : FieldErrors
+  error : string
+  userForm : FormGroup
   formData : FormData
-  errors : any[]
-  next : boolean
-  filePlaceholder = 'logo'
+  page : number
+  filePlaceholder : string
+  
+  constructor(private authService : AuthService ,private userService : UserService, private router : Router, private fb: FormBuilder) {
+    this.userForm = this.fb.group({
+      username: [''],
+      email: [''],
+      password: [''],
+      repeatPassword: [''],
+      country: [''],
+      info: ['']
+    });
 
-  constructor(private authService : AuthService ,private userService : UserService, private router : Router) {
     this.formData = new FormData()
-    this.next = false
+    this.page = 1
+    this.filePlaceholder = 'logo'
+    this.errors = {}
   }
 
   ngOnInit() { }
@@ -30,29 +50,54 @@ export class RegisterComponent implements OnInit {
     this.formData.set('image', logo)
   }
 
-  register(userForm : NgForm){
-    if(this.next){
-      const username =  userForm.controls['username'].value
-      const password = userForm.controls['password'].value
-      const repeatPassword = userForm.controls['repeat-password'].value
-
-      const user = {
-        username,
-        password,
-        repeatPassword
-      }
-
-      this.formData.set('user', JSON.stringify(user))
-      this.userService.register(this.formData).subscribe(
-        data => {
-          localStorage.setItem('Authorization', data['token'])
-          localStorage.setItem('user', JSON.stringify(data))
-          this.authService.setUserDetails(data)
-          this.router.navigate(['home'])
-
-        },
-        err  => this.errors = err['errors']
-      );
+  validatePassword(){
+    let message = ''
+    if(this.password.nativeElement.value != this.repeatPassword.nativeElement.value){
+      message = 'Passwords must match.'
     }
+    this.password.nativeElement.setCustomValidity(message)
   }
+
+  register(){
+    const { username, email, password, country, info } = this.userForm.value
+
+    this.formData.set('username', username)
+    this.formData.set('email', email)
+    this.formData.set('password', password)
+    this.formData.set('country', country)
+    this.formData.set('info', info)
+
+    this.userService.register(this.formData).subscribe(
+      res  => {
+        localStorage.setItem('user', JSON.stringify(res))
+        this.authService.setUserDetails(res)
+        this.router.navigate(['home'])
+
+      },
+      err => {
+        if(err.status == 422){
+          let page = 3; 
+          this.errors = err.error
+          const { username, email, password } = this.errors
+          
+          if(username || email){
+            page = 1
+          }else if(password){
+            page = 2;
+          }
+  
+          this.page = page;
+        }else{
+          this.error = err.error
+        }
+      });
+  }
+}
+
+interface FieldErrors{
+  username?: string,
+  email?: string,
+  password?: string,
+  country?: string,
+  info?: string
 }
