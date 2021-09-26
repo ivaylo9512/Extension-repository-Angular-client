@@ -4,71 +4,71 @@ section{
     overflow: hidden;
     position: relative;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 .container{
     width: 40%;
-    border: 2px solid black;
     text-align: center;
     display: inline-block;
     padding-bottom: 6vh;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    border-radius: 16px;
+    box-shadow: 0 0 0.6vw 0.01vw rgba(0, 0, 0, 0.6);
+    border-radius: 0.2vh;
     position: relative;
     overflow: hidden;
 }
 input,
 label{
-    border: 0px;
+    border: 0;
     width: 100%;
     height: 100%;
-    padding-left: 8px;
+    padding-left: 1%;
     background: transparent;
-    border-radius: 0 16px 16px 0;
+    border-radius: 0 0.2vh 0.2vh 0;
+    font-size: 1.5vh;
 }
-i{
-    padding: 0 7px;
-}
-form i{
+.input-container i{
     display: flex;
     height: 100%;
     align-items: center;
-    padding: 0 18px;
-    border-right: 1px solid black;
-    float: left;
+    justify-content: center;
+    width: 11%;
+    font-size: 1.5vh;
 }
-.inputs-container{
+.inputs{
+    align-items: center;
     padding: 5vh 0;
     display: flex;
     justify-content: center;
     flex-direction: column;
 }
-.inputs-container div{
+.inputs .error{
+  margin: 0;
+}
+.input-container {
     height: 8.5vh;
-    border: 1px solid black;
-    margin: 0 15%;
     width: 70%;
     display: flex;
-    border-radius: 15px;
-    margin-top: 15px;
+    border-radius: 0.2vh;
+    margin: 0.9vh 0;
     align-items: center;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 0 0.3vw 0.01vw rgb(0 0 0 / 85%);
 }
 .buttons-container{
     height: 15vh;
 }
 button{
-    border: 1px solid black;
+    border: 0;
     height: 100%;
     text-align: center;
     box-sizing: border-box;
     width: 50%;
     display: inline-block;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 1vh 1vh 0 rgb(0 0 0 / 20%), 0 1vh 2vh 0 rgb(0 0 0 / 19%);
     background: black;
     color: white;
-    margin-top: 3px;
+    font-size: 1.5vh;
 }
 span{
     background: linear-gradient(#e66465, #9198e5);
@@ -77,53 +77,31 @@ span{
     position: absolute;
     transition: 1s;
     z-index: -1;
-
-    -webkit-transform: translateZ(0) translateY(0);
-    -moz-transform: translateZ(0 translateY(0));
-    -ms-transform: translateZ(0) translateY(0);
-    -o-transform: translateZ(0) translateY(0);
     transform: translateZ(0) translateY(0);
 }
 form span{
     bottom: 50%;
     right: -20%;
 }
-.errors{
+.error{
     text-align: center;
-    margin-top: 15px;
+    margin-top: 1.5vh;
     color: red;
     font-weight: bold;
-}
-.errors div{
-    margin: auto;
-    display: inline-block;
-    text-align: left;
-}
-.errors b{
-    display: block;
-    margin-bottom: 2px;
-    padding-top: 2px;
-
 }
 .circle{
     width: 30%;
     padding-bottom: 30%;
     left: 9%;
     bottom: 27%;
-    -webkit-animation: initial-translate 4s forwards; 
-    -moz-animation: initial-translate 4s forwards; 
-      -o-animation: initial-translate 4s forwards;
-         animation: initial-translate 4s forwards; 
+    animation: initial-translate 4s forwards; 
 }
 .circle2{
     width: 50%;
     padding-bottom: 50%;
     top: -9vw;
     right: -15%;
-    -webkit-animation: initial-translate 4s forwards; 
-    -moz-animation: initial-translate 4s forwards; 
-      -o-animation: initial-translate 4s forwards;
-         animation: initial-translate 4s forwards; 
+    animation: initial-translate 4s forwards; 
 }
 .logo label{
     text-align: left;
@@ -145,35 +123,11 @@ form span{
         bottom: 52%;
     }
 }
-@-webkit-keyframes initial-translate {
+@keyframes initial-translate {
     from {
-      transform: translateY(80%);
+        transform: translateY(80%);
     }
     to {
-      transform: translateY(0);
+        transform: translateY(0);
     }
-  }
-  @-moz-keyframes initial-translate {
-    from {
-      transform: translateY(80%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-  @-o-keyframes initial-translate {
-    from {
-      transform: translateY(80%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-  @keyframes initial-translate {
-    from {
-      transform: translateY(80%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
+}

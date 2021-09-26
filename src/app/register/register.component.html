@@ -1,16 +1,23 @@
 <section>
     <span class="circle"></span>
     <div class="container">
-        <form #userForm="ngForm" (ngSubmit)="next = true" ngNativeValidate autocomplete="on" [ngStyle]="{'display' : next ? 'none' : 'block'}">
-            <div class="inputs-container">
-                <div>  
+        <form [formGroup]="userForm" (ngSubmit)="page = 2" ngNativeValidate autocomplete="on" [ngStyle]="{'display' : page == 1 ? 'block' : 'none'}">
+            <div class="inputs">
+                <div class="input-container">  
                     <i class="fas fa-user"></i>
-                    <input name="username" type="text" required placeholder="username" ngModel required autocomplete="username">
+                    <input formControlName="username" name="username" type="text" required minLength='8' maxlength='20' placeholder="username" required autocomplete="username">
                 </div>
-                <div class="logo">  
-                    <i class="fas fa-image"></i>
-                    <label for="logo">{{filePlaceholder}}</label>
-                    <input (change)="addLogo($event)" placeholder="logo" name="logo" id="logo" type="file">
+                <div class="error" *ngIf="errors.username">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{errors.username}}
+                </div>
+                <div class="input-container">  
+                    <i class="fas fa-envelope"></i>
+                    <input formControlName="email" name="email" type="email" required placeholder="email" required autocomplete="username">
+                </div>
+                <div class="error" *ngIf="errors.email">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{errors.email}}
                 </div>
             </div> 
             <div class="buttons-container">
@@ -18,27 +25,59 @@
                 <button type="button" routerLink="/login">login</button>
             </div>
         </form>
-        <form #userForm="ngForm" (ngSubmit)="register(userForm)" ngNativeValidate autocomplete="on" [ngStyle]="{'display' : next ? 'block' : 'none'}">
-            <div class="inputs-container">
-                <div>  
+        <form [formGroup]="userForm" (ngSubmit)="page = 3" ngNativeValidate autocomplete="on" [ngStyle]="{'display' : page == 2 ? 'block' : 'none'}">
+            <div class="inputs">
+                <div class="input-container">  
                     <i class="fas fa-key"></i>
-                    <input name="password" type="password" placeholder="password" ngModel required autocomplete="password">
+                    <input #password formControlName="password" name="password" (change)="validatePassword()" type="password" placeholder="password" required minLength=10 maxlength=25 autocomplete="password">
                 </div>
-                <div>  
+                <div class="error" *ngIf="errors.password">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{errors.password}}
+                </div>
+                <div class="input-container">  
                     <i class="fas fa-key"></i>
-                    <input name="repeat-password" type="password" placeholder="repeat" ngModel required autocomplete="password">
+                    <input #repeatPassword formControlName="repeatPassword" name="repeatPassword" (change)="validatePassword()" type="password" placeholder="repeat" required minLength=10 maxlength=25 autocomplete="password">
+                </div>
+                <div class="input-container logo">  
+                    <i class="fas fa-image"></i>
+                    <label for="logo">{{filePlaceholder}}</label>
+                    <input (change)="addLogo($event)" placeholder="logo" name="logo" id="logo" type="file">
                 </div>
             </div>   
             <div class="buttons-container">
-                <button type="submit" (click)=register(userForm)>register</button>
+                <button type="submit" (click)="validatePassword($event)">next</button>
+                <button type="button" routerLink="/login">login</button>
+            </div>
+        </form>
+        <form [formGroup]="userForm" (ngSubmit)="register(userForm)" ngNativeValidate autocomplete="on" [ngStyle]="{'display' : page == 3 ? 'block' : 'none'}">
+            <div class="inputs">
+                <div class="input-container">  
+                    <i class="fas fa-globe-europe"></i>
+                    <input formControlName="country" name="country" type="text" placeholder="country" required>
+                </div>
+                <div class="error" *ngIf="errors.country">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{errors.country}}
+                </div>
+                <div class="input-container">  
+                    <i class="fas fa-info"></i>
+                    <input formControlName="info" name="info" type="text" placeholder="info" required>
+                </div>
+                <div class="error" *ngIf="errors.info">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    {{errors.info}}
+                </div>
+            </div>   
+            <div class="buttons-container">
+                <button type="submit">register</button>
                 <button type="button" routerLink="/login">login</button>
             </div>
         </form>
         <span class="circle2"></span>
     </div>
-    <div class="errors" *ngIf="errors">
-        <div>
-            <b *ngFor="let error of errors"><i class="fas fa-exclamation-triangle"></i>{{error.code}}</b>
-        </div>
+    <div class="error" *ngIf="error">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{error}}
     </div>
 </section>
