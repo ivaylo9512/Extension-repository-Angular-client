@@ -12,19 +12,20 @@ import { ProfileAnimationService } from '../services/profile.animation.service';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  @HostListener('window:resize', ['$event'])
   @ViewChild(MouseWheelDirective) wheelDirective: MouseWheelDirective
  
+  @HostListener('window:resize', ['$event'])
   onResize() {
-    this.handleUserInfo(this.userInfo)
+      this.handleUserInfo()
   }
 
   loggedUser: any
   user: User
   extensions: Extension[]
   admin: boolean
-  homeComponent: boolean
   baseUrl: string
+  isInfoToggled: boolean
+  changeInterval : any
 
   @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<any>
   @ViewChildren('userInfo') userInfo: QueryList<any>
@@ -37,21 +38,40 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.homeComponent = this.route.component['name'] == 'HomeComponent'
-    if(!this.homeComponent){
+    const component = this.route.component['name']
+    this.extensionsService.component = component
+    
+    if(component != 'HomeComponent'){
       this.getUser(+this.route.snapshot.paramMap.get('id'));
+      this.profileAnimationService.isAnimated = true
+      this.profileAnimationService.isDisplayed = true
     }else{
       this.loggedUser = JSON.parse(localStorage.getItem('user'))
+      this.profileAnimationService.isAnimated = false
       if(this.loggedUser){
         this.getUser(this.loggedUser['id'])
       }
     }
   }
 
+  ngOnDestroy() {
+    this.profileAnimationService.isAnimated = undefined
+    this.profileAnimationService.isDisplayed = false
+    this.extensionsService.resetExtensions()
+  }
+
+  ngAfterViewInit() {
+    this.wheelDirective.profileComponent.profileHeight = this.profileSection.nativeElement.offsetHeight
+    this.cdRef.detectChanges()
+    this.userInfo.changes.subscribe(info => 
+      this.handleUserInfo()
+    )
+  }
+
   fixOverflow(node){  
-    let height = node.nativeElement.offsetHeight
-    let scrollHeight = node.nativeElement.scrollHeight
-    let text = node.nativeElement.innerHTML + '...'
+    let height = node.offsetHeight
+    let scrollHeight = node.scrollHeight
+    let text = node.textContent + '...'
   
     while(height < scrollHeight){
       let words = text.split(' ')
@@ -59,25 +79,40 @@ export class ProfileComponent implements OnInit {
       words.pop()
       text = words.join(' ') + '...'
       
-      node.nativeElement.innerHTML = text
-      height = node.nativeElement.offsetHeight
-      scrollHeight = node.nativeElement.scrollHeight
+      node.textContent = text
+      height = node.offsetHeight
+      scrollHeight = node.scrollHeight
     }
   }
-  
-  ngAfterViewInit() {
-    this.wheelDirective.profileComponent.profileHeight = this.profileSection.nativeElement.offsetHeight
-    this.userInfo.changes.subscribe(info => 
-      this.handleUserInfo(info.toArray())
-    )
-    this.cdRef.detectChanges()
+
+  toggleInfo(){
+    this.isInfoToggled = !this.isInfoToggled
+    this.handleUserInfo()
   }
 
-  handleUserInfo(info){
-    info.forEach(description => { 
-      description.nativeElement.innerHTML = this.user.info
-      this.fixOverflow(description)
-    })
+  handleUserInfo(){
+    const node = this.userInfo.last.nativeElement
+    node.textContent = this.user.info
+
+    if(window.innerWidth > 1200){
+      clearInterval(this.changeInterval)
+
+      if(this.isInfoToggled){
+        return
+      }
+
+      if(node.style.height != 'auto'){
+        this.fixOverflow(node)
+        return
+      }
+
+      this.changeInterval = setInterval(() => {
+        if(node.style.height != 'auto'){
+          this.fixOverflow(node)
+          clearInterval(this.changeInterval)
+        }
+      }, 50)
+    }
   }
 
   getUser(id: number){
