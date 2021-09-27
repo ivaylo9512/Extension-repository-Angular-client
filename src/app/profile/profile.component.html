@@ -1,115 +1,33 @@
-<section mouseWheel [ngClass]="{'home-component' : homeComponent}" class="second-section" id="second-section">
-    <span class="loading-animation">
-        <div>
-            <i class="fas fa-circle-notch fa-spin"></i>
+<section [ngClass]="{ 'fade-in' : this.profileAnimationService.isAnimated }" mouseWheel class="profile-section" #profileSection>
+    <section class="user-profile">
+        <span *ngIf="!user && !extensionsService.totalExtensions" class="loading-animation">
+            <div>
+                <i class="fas fa-circle-notch fa-spin"></i>
+            </div>
+        </span>
+        <div class="logo-container">
+            <div class="hover-circle">
+            </div>
+            <img [src]="baseUrl + 'api/files/download/' + user.profileImage" *ngIf="user && user.profileImage"/>
         </div>
-    </span>
-    <div [ngClass]="{'fade-in' : this.profileAnimationService.isAnimated, 'fade-out' : this.profileAnimationService.isAnimated === false}" class="profile-section" #profileSection>
-        <div *ngIf="user" class="profile-container">
-            <div class="user-info-container">
-                <div class="username">
-                    <h1>{{user.username}}</h1>
-                </div>
-                <div class="profile">
-                    <h2>Extensions: {{user.totalExtensions}}</h2>
-                    <h3>Rating: {{user.rating}}</h3>
-                    <h4>Country: {{user.country}}</h4>
-                    <h5>Info</h5>
-                    <div class="user-info">
-                        <p #userInfo>
-                            {{user.info}}
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="info-container">
-                <div class="hover-circle">
-                </div>
-                <div *ngIf="user" class="info-box">
-                    <img class="logo-box" [src]="baseUrl + 'api/files/download/' + user.profileImage" *ngIf="user.profileImage"/>
-                </div>
-            </div>
-            <div class="circle-container">
-                <span [ngClass]="{'animate' : profileAnimationService.isAnimated}" [ngStyle]="{'transform': profileAnimationService.isAnimated && !wheelDirective.isMobile ? 'translateY(' + profileAnimationService.circleTransform / 5 + '%)' : wheelDirective.isMobile ? 'translateY(0)' : 'translateY(90%)'}" class="circle" id="circle"></span>
+        <div *ngIf="user" [ngClass]="{ 'expanded' : isInfoToggled && !wheelDirective.isMobile }" class="user-info-container">
+            <h1>{{user.username}}</h1>
+            <div class="user-info">
+                <h2>Extensions: {{user.totalExtensions}}</h2>
+                <h3>Rating: {{user.rating}}</h3>
+                <h4>Country: {{user.country}}</h4>
+                <h5>Info</h5>
+                <p [ngStyle]="{ 'height' : isInfoToggled ? 'auto' : '40%' }" #userInfo>
+                    {{user.info}}
+                </p>
             </div>
         </div>
-        <div *ngIf="user" class="user-info-container-mobile">
-                <div class="profile">
-                    <h1>{{user.username}}</h1>
-                    <h2>Extensions: {{user.totalExtensions}}</h2>
-                    <h3>Rating: {{user.rating}}</h3>
-                    <h4>Country: {{user.country}}</h4>
-                    <h5>Info</h5>
-                    <div class="user-info">
-                        <p>
-                            {{user.info}}
-                        </p>
-                    </div>
-                </div>
+        <div class="circle-container">
+            <span [ngClass]="{'animate' : profileAnimationService.isAnimated}" [ngStyle]="{'transform': profileAnimationService.isAnimated && !wheelDirective.isMobile ? 'translateY(' + profileAnimationService.circleTransform / 5 + '%)' : wheelDirective.isMobile ? 'translate(-50%, -80%)' : 'translateY(90%)'}" class="circle" id="circle"></span>
         </div>
-        <div class="info-button">
-            <i class="fas fa-info-circle"></i>
-        </div>
-    </div>
-    <div [ngStyle]="{'display' : profileAnimationService.isDisplayed ? 'block' : 'none'}" #extensionsContainer class="user-extensions" id="extensions-section">
-        <div class="extensions">
-            <div class="info-container" *ngFor="let extension of extensions | paginate: config" [routerLink]="['/extension', extension.id]">
-                <div class="info-box">
-                    <div class="hover-circle">
-                    </div>
-  
-                    <div class="logo-container">
-                        <img class="logo-box" [src]="baseUrl + 'api/files/download/' + extension.imageName" *ngIf="extension.imageName"/>
-                    </div>
-  
-                    <div class="extension-info">
-                        <div class="name">
-                            <b>{{extension.name}}</b>
-                        </div>
-                        <p #extensionDescriptions>
-                            {{extension.description}}
-                        </p>
-                        <div class="rating">
-                            <i *ngIf="extension.rating == 0.5" class="fas fa-star-half"></i>
-                            <i *ngIf="extension.rating >= 1" class="fas fa-star"></i>
-                            <i *ngIf="extension.rating == 1.5" class="fas fa-star-half"></i>
-                            <i *ngIf="extension.rating >= 2" class="fas fa-star"></i>
-                            <i *ngIf="extension.rating == 2.5" class="fas fa-star-half"></i>
-                            <i *ngIf="extension.rating >= 3" class="fas fa-star"></i>
-                            <i *ngIf="extension.rating == 3.5" class="fas fa-star-half"></i>
-                            <i *ngIf="extension.rating >= 4" class="fas fa-star"></i>
-                            <i *ngIf="extension.rating == 4.5" class="fas fa-star-half"></i>
-                            <i *ngIf="extension.rating >= 5" class="fas fa-star"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="circle-container">
-                <span [ngStyle]="{'transform': profileAnimationService.isAnimated ? 'translateY(' + profileAnimationService.circleTransform * 2.5 + '%)' : 'translateY(90%)'}" class="circle"></span>
-            </div>
-            <div class="circle-container">
-                <span [ngStyle]="{'transform': profileAnimationService.isAnimated ? 'translateY(' + profileAnimationService.circleTransform * 6.5 + '%)' : 'translateY(0)'}" class="circle second"></span>
-            </div>
-        </div>
-       <pagination-template #p="paginationApi" [id]="config.id" (pageChange)="changePage($event)">
-          <ul class="pagination-list">
-              <li class="previous" *ngIf="!p.isFirstPage()">
-                  <a (click)="changePage(config.currentPage - 1)">
-                      <span>Prev</span>
-                  </a>
-              </li>
-              <li *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value">
-                  <a (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}
-                      <span *ngIf="p.getCurrent() === page.value">{{ page.label }}</span>              
-                  </a>
-                  <span *ngIf="p.getCurrent() === page.value">{{ page.label }}</span>
-              </li>
-              <li class="next" *ngIf="!p.isLastPage()">
-                  <a *ngIf="!p.isLastPage()" (click)="changePage(config.currentPage + 1)">
-                      <span>Next</span>
-                  </a>
-              </li>              
-          </ul>
-        </pagination-template> 
-    </div>
+        <button (click)="toggleInfo()" class="info-button">
+            <i class="fas fa-info"></i>
+        </button>
+    </section>
+    <app-extensions-list class="profile"></app-extensions-list>
 </section>
