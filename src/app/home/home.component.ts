@@ -4,8 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ProfileComponent } from '../profile/profile.component';
 import { FavExtensionsComponent } from '../fav-extensions/fav-extensions.component';
-import { Router, NavigationEnd } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
 import { ProfileAnimationService } from '../services/profile.animation.service';
 
@@ -34,7 +32,7 @@ export class HomeComponent implements OnInit {
 
   ngOnDestroy() {
       clearTimeout(this.profileAnimationService.animationTimeout)
-      this.profileAnimationService.isAnimated = undefined
+      this.profileAnimationService.isAnimated = false
       this.profileAnimationService.isDisplayed = false
   }
 
