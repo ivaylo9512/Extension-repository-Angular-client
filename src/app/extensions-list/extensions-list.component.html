@@ -1,0 +1,62 @@
+<div [ngStyle]="{'display' : profileAnimationService.isDisplayed ? 'block' : 'none'}" #extensionsContainer class="extensions-container" id="extensions-section">
+    <span *ngIf="!extensionsService.totalExtensions" class="loading-animation">
+        <div>
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </div>
+    </span>
+    <div class="extensions">
+        <div class="info-container" *ngFor="let extension of extensionsService.currentExtensions | paginate: extensionsService.config" [routerLink]="['/extension', extension.id]">
+            <div class="hover-circle">
+            </div>
+            <div class="logo-container">
+                <img class="logo" [src]="baseUrl + 'api/files/download/' + extension.imageName" *ngIf="extension.imageName"/>
+            </div>
+            <div class="extension-info">
+                <div class="name">
+                    {{extension.name}}
+                </div>
+                <p #extensionDescriptions>
+                    {{extension.description}}
+                </p>
+                <div class="rating">
+                    <i *ngIf="extension.rating == 0.5" class="fas fa-star-half"></i>
+                    <i *ngIf="extension.rating >= 1" class="fas fa-star"></i>
+                    <i *ngIf="extension.rating == 1.5" class="fas fa-star-half"></i>
+                    <i *ngIf="extension.rating >= 2" class="fas fa-star"></i>
+                    <i *ngIf="extension.rating == 2.5" class="fas fa-star-half"></i>
+                    <i *ngIf="extension.rating >= 3" class="fas fa-star"></i>
+                    <i *ngIf="extension.rating == 3.5" class="fas fa-star-half"></i>
+                    <i *ngIf="extension.rating >= 4" class="fas fa-star"></i>
+                    <i *ngIf="extension.rating == 4.5" class="fas fa-star-half"></i>
+                    <i *ngIf="extension.rating >= 5" class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+        <div class="circle-container">
+            <span [ngStyle]="{'transform': profileAnimationService.isAnimated ? 'translateY(' + profileAnimationService.circleTransform * 2.5 + '%)' : 'translateY(90%)'}" class="circle"></span>
+        </div>
+        <div class="circle-container">
+            <span [ngStyle]="{'transform': profileAnimationService.isAnimated ? 'translateY(' + profileAnimationService.circleTransform * 6.5 + '%)' : 'translateY(0)'}" class="circle second"></span>
+        </div>
+    </div>
+    <pagination-template #p="paginationApi" (pageChange)="extensionsService.getNextExtensions($event)">
+        <ul class="pagination-list">
+            <li class="previous" *ngIf="!p.isFirstPage()">
+                <a (click)="extensionsService.getNextExtensions(extensionsService.config.currentPage - 1)">
+                    <span>Prev</span>
+                </a>
+            </li>
+            <li *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value">
+                <a (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}
+                    <span *ngIf="p.getCurrent() === page.value">{{ page.label }}</span>              
+                </a>
+                <span *ngIf="p.getCurrent() === page.value">{{ page.label }}</span>
+            </li>
+            <li class="next" *ngIf="!p.isLastPage()">
+                <a *ngIf="!p.isLastPage()" (click)="extensionsService.getNextExtensions(extensionsService.config.currentPage + 1)">
+                    <span>Next</span>
+                </a>
+            </li>              
+        </ul>
+    </pagination-template> 
+</div>
