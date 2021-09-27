@@ -6,22 +6,24 @@ pagination-template ul{
 }
 pagination-template li{
     display: inline-block;
-    margin-right: 0.0625rem;
+    margin-right: 0.2vw;
     border-radius: 0;
     cursor: pointer;
+    padding: 0.5vh 0.6vw;
+    text-shadow: 0 0 0.07vw black;
 }
 pagination-template li.current{
-    padding: 0.1875rem 0.625rem;
     background: black;
     color: white;
     cursor: default;
+    border-radius: 0.2vw;
+    box-shadow: 0 0 0.1vw 0.1vw black;
 }
 pagination-template ul a:hover{
     background: rgba(0, 0, 0, 0.4);
 }
 pagination-template a{
     display: block;
-    padding: 0.1875rem 0.625rem;
     border-radius: 0;
 }
 pagination-template .previous.disabled::before{
@@ -78,6 +80,7 @@ pagination-template .next a::after{
     top: 0;
     z-index: 4;
     margin: 0;
+    visibility: visible;
     background: #00000080;
     display: -webkit-box;
     display: -webkit-flex;
