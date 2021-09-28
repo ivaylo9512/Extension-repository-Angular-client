@@ -40,34 +40,27 @@ section{
 }
 .info-container{
     width: 16%;
+    padding-bottom: 16%;
     position: absolute;
     background-color: rgba(255, 255, 255, 0.3);
     cursor: pointer;
     z-index: 4;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 0.2vw 0.3vw 0 rgb(0 0 0 / 20%), 0 0.2vw 1.5vw 0 rgb(0 0 0 / 19%);
     border-radius: 8%;
     overflow: hidden;
     top: 50%;
     left:50%;
-    margin: -8% 0 0 -8%;
+    transform: translate(-50%, -50%);
 }
-.info-box{
-    position: relative;
-    width: 100%;
-    padding-bottom: 100%;
-    overflow: hidden;
-}
-.info-box .logo-box{
+.info-container:focus {
+    outline: 0;
+  }
+.logo{
     width: 50%;
     position: absolute;
     top: 50%;
     left:50%;
-    margin: -25% 0 0 -25%;
-}
-.info-box img{
-    position: relative;
-    width: 100%;
-    padding-bottom: 100%;
+    transform: translate(-50%, -50%);
 }
 .hover-circle{
     position: absolute;
@@ -80,33 +73,28 @@ section{
     border-radius: 50%;
     overflow: hidden;
 }
-.info-box:hover .hover-circle{
+.info-container:hover .hover-circle{
     width: 15%;
     height: 15%;
 }
-.info-box:hover .hover-box{
-    width: 500px;
-    height: 500px;
-}
-.info-box:hover .logo-container{
+.info-container:hover .logo-container{
     width: 25%;
     height: 25%;
 }
-.info-box:hover .extension-info{
+.info-container:hover .extension-info{
     transition-delay: 1s;
     opacity: 1;
 }
 .rating{
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
     display: flex;
     align-items: center;
+    justify-content: center;
     height: 25%;
-    padding-left: 22%;
+    text-align: center;
+    padding-left: 14%;
 }
 .rating i{
-    font-size: 1.6em;
+    font-size: 1.8vw;
     color: #f6cd61;
 }
 .logo-container{
@@ -123,12 +111,17 @@ section{
     animation: fadeIn 2.5s;
 }
 .name{
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    align-items: center;
-    height: 25%;
+    font-size: 4vh;
+    padding-left: 22%;
+    padding-bottom: 5.7%;
+    width: 60%;
+    margin-top: 5.7%;
+    font-weight: bold;
+    color: black;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: center;
 }
 .extension-info{
     width: 100%;
@@ -141,40 +134,31 @@ section{
     transition-delay: 0s;
 }
 .extension-info p{
-    margin-left: 5px;
-    font-size: 1.3em;
+    font-size: 2.2vh;
     font-style: italic;
     visibility: visible;
-    display: block;
+    display: flex;
+    align-items: center;
     height: 50%;
-    color: black;
-}
-.extension-info b{
-    margin-left: 5px;
-    font-size: 1.8em;
-    padding-left: 20%;
-    width: 100%;
-    line-height: normal;
-    font-weight: bold;
-    color: black;
-    font-style: normal;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     overflow: hidden;
+    padding: 3vh 10%;
+    text-align: center;
+    color: black;
+    box-sizing: border-box;
+    font-weight: bold;
 }
-@media (max-width: 1200px) {
+@media (max-width: 1281px) {
+    .fav-extensions{
+        height: 8vh;
+        background: black;
+        position: relative;
+    }
     .fav-extensions .info-container {
         width: 100%;
         box-shadow: none;
         background: black;
         left: 0;
         margin: -4.5vh 0 0 0%;
-    }
-
-    .fav-extensions{
-        height: 8vh;
-        background: black;
-        position: relative;
     }
     .extension-info{
         display: none;

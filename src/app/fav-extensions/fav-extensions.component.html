@@ -9,32 +9,28 @@
             <img class="current"  *ngFor="let extension of extensions" [ngStyle]="{'background-image':'url(' + baseUrl + 'api/files/download/' + extension.coverName + ')'}">
         </div>
         <div class="info-container" *ngFor="let extension of extensions" [ngStyle]="{'display' : (extensions.indexOf(extension) == currentIndex || initial) ? 'block' : 'none'}" [routerLink]="['/extension', extension.id]">
-            <div class="info-box">
-                <div class="hover-circle"></div>
-
-                <div [ngClass]="{'fade-in' : extensions.indexOf(extension) == currentIndex}" class="logo-container">
-                    <img [src]="baseUrl + 'api/files/download/' + extension.imageName" class="logo-box"/>
+            <div class="hover-circle"></div>
+            <div [ngClass]="{'fade-in' : extensions.indexOf(extension) == currentIndex}" class="logo-container">
+                <img [src]="baseUrl + 'api/files/download/' + extension.imageName" class="logo"/>
+            </div>
+            <div class="extension-info">
+                <div class="name">
+                    <b>{{extension.name}}</b>
                 </div>
-
-                <div class="extension-info">
-                    <div class="name">
-                        <b>{{extension.name}}</b>
-                    </div>
-                    <p #extensionDescriptions>
-                        {{extension.description}}
-                    </p>
-                    <div class="rating">
-                        <i *ngIf="extension.rating == 0.5" class="fas fa-star-half"></i>
-                        <i *ngIf="extension.rating >= 1" class="fas fa-star"></i>
-                        <i *ngIf="extension.rating == 1.5" class="fas fa-star-half"></i>
-                        <i *ngIf="extension.rating >= 2" class="fas fa-star"></i>
-                        <i *ngIf="extension.rating == 2.5" class="fas fa-star-half"></i>
-                        <i *ngIf="extension.rating >= 3" class="fas fa-star"></i>
-                        <i *ngIf="extension.rating == 3.5" class="fas fa-star-half"></i>
-                        <i *ngIf="extension.rating >= 4" class="fas fa-star"></i>
-                        <i *ngIf="extension.rating == 4.5" class="fas fa-star-half"></i>
-                        <i *ngIf="extension.rating >= 5" class="fas fa-star"></i>
-                    </div>
+                <p #extensionDescriptions>
+                    {{extension.description}}
+                </p>
+                <div class="rating">
+                    <i *ngIf="extension.rating == 0.5" class="fas fa-star-half"></i>
+                    <i *ngIf="extension.rating >= 1" class="fas fa-star"></i>
+                    <i *ngIf="extension.rating == 1.5" class="fas fa-star-half"></i>
+                    <i *ngIf="extension.rating >= 2" class="fas fa-star"></i>
+                    <i *ngIf="extension.rating == 2.5" class="fas fa-star-half"></i>
+                    <i *ngIf="extension.rating >= 3" class="fas fa-star"></i>
+                    <i *ngIf="extension.rating == 3.5" class="fas fa-star-half"></i>
+                    <i *ngIf="extension.rating >= 4" class="fas fa-star"></i>
+                    <i *ngIf="extension.rating == 4.5" class="fas fa-star-half"></i>
+                    <i *ngIf="extension.rating >= 5" class="fas fa-star"></i>
                 </div>
             </div>
         </div>
