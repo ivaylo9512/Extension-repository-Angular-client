@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Subscription } from 'rxjs';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 export interface Extension {
   id: number,
@@ -50,9 +49,8 @@ export class ExtensionsService {
 
   totalExtensions : Extension[]
   currentExtensions : Extension[]
-
   nameQuery : string
-  routeSubscription : Subscription
+  component : string
 
   config = {
     itemsPerPage: 8,
@@ -60,17 +58,25 @@ export class ExtensionsService {
     totalItems: null
   }
   
-  constructor(private httpClient : HttpClient, private route: ActivatedRoute) { 
+  constructor(private httpClient : HttpClient) { 
   }
 
   getNextExtensions(page : number){
-    const component = this.route.component['name']
-    switch(component){
-      case 'ProfileCon' :
+    switch(this.component){
+      case 'ProfileComponent' :
       case 'HomeComponent' :
         this.getNextUserExtensions(page)
-
+      case 'PendingsComponent' :
+        this.getNextPending
     }
+  }
+
+  resetExtensions() {
+    this.config.currentPage = 1
+    this.config.totalItems = 0
+    this.totalExtensions = null
+    this.currentExtensions = null
+    this.nameQuery = null
   }
 
   getUserExtensions(){
@@ -80,22 +86,44 @@ export class ExtensionsService {
     })
   }
 
+  getPending() {
+    this.findPendings(this.config.itemsPerPage).subscribe(page => {
+      this.totalExtensions = this.currentExtensions = page.data
+      this.config.totalItems = page.totalResults
+    })
+  }
+
+  getNextPending(page: number){
+    const length = this.totalExtensions.length
+    const itemsPerPage = this.config.itemsPerPage;
+    this.onPageChange(this.findPendings(itemsPerPage * (page - length / itemsPerPage), this.totalExtensions[length - 1].id), page);
+  }
+
   getNextUserExtensions(page : number){
     const length = this.totalExtensions.length
     const itemsPerPage = this.config.itemsPerPage;
-    const userExtensions = this.totalExtensions;
-  
+    this.onPageChange(this.findUserExtensions(itemsPerPage * (page - length / itemsPerPage), this.totalExtensions[length - 1].id), page)
+  }
+
+  onPageChange(request : Observable<Page>, page : number) {
+    const length = this.totalExtensions.length
+    const itemsPerPage = this.config.itemsPerPage;
+
     if(length <= (page - 1) * itemsPerPage){
-      this.findUserExtensions(itemsPerPage * (page - length / itemsPerPage), userExtensions[length - 1].id).subscribe(pageData => {
-        this.config.totalItems = userExtensions.length + pageData.totalResults
-        userExtensions.push(...pageData.data)
-        this.currentExtensions = userExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-        this.config.currentPage = page;
+      request.subscribe(pageData => {
+        this.setExtensions(pageData, page)
       })
     }else{
-      this.currentExtensions = userExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+      this.currentExtensions = this.totalExtensions.slice((page - 1) * itemsPerPage, page * itemsPerPage);
       this.config.currentPage = page;
     }
+  }
+
+  setExtensions(pageData : Page, page : number){
+    this.config.totalItems = this.totalExtensions.length + pageData.totalResults
+    this.totalExtensions.push(...pageData.data)
+    this.currentExtensions = this.totalExtensions.slice((page - 1) * this.config.itemsPerPage, page * this.config.itemsPerPage)
+    this.config.currentPage = page;
   }
 
   findUserExtensions(pageSize : number, lastId? : number){
@@ -127,7 +155,7 @@ export class ExtensionsService {
     const params = new HttpParams().set('link', gitHub)
     return this.httpClient.get('/api/github/getRepoDetails', {params})
   }
-  getExtensions(name : string, criteria : string, page : string, perPage : string){
+  findExtensions(name : string, criteria : string, page : string, perPage : string){
     const params = new  HttpParams().set('name', name).set('orderBy', criteria).set('page', page).set('perPage', perPage)
     return this.httpClient.get<any>('/api/extensions/filter', {params})                                          
   }
