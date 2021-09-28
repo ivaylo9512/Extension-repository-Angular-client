@@ -8,7 +8,7 @@ import { AuthService } from '../services/auth.service';
 export class RequestsInterceptor implements HttpInterceptor {
     baseUrl : string
     constructor(private authService: AuthService) {
-        this.baseUrl = 'http://localhost:8090'
+        this.baseUrl = 'http://192.168.0.106:8090'
      }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

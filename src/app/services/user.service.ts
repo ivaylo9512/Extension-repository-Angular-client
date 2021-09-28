@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http'
+import { HttpClient, HttpParams } from '@angular/common/http'
 
 export interface User{
   id : number,
@@ -73,7 +73,7 @@ export class UserService {
     })
   }
 
-  register(formData : FormData){
-    return this.httpClient.post('/api/users/register', formData)
+  register(formData : FormData) {
+    return this.httpClient.post<User>('/api/users/register', formData)
   }
 }

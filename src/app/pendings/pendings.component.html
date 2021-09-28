@@ -1,9 +1,4 @@
 <section mouseWheel>
-    <span *ngIf="!extensionsService.totalExtensions"  class="loading-animation">
-        <div>
-            <i class="fas fa-circle-notch fa-spin"></i>
-        </div>
-    </span>
     <h1>Extensions waiting: {{extensionsService.config.totalItems}}</h1>
     <span class="circle"></span>
     <app-extensions-list></app-extensions-list>
