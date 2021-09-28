@@ -21,20 +21,17 @@ export class MouseWheelDirective implements OnInit {
   }
 
   touchStartY: number
-  scrollDir: number
   scrolledAmount: number
   isMobile: boolean
   currentComponent: string
 
   @ViewChild('tagsContainer') tagsContainer : ElementRef
+
   constructor(private authService: AuthService, private route: ActivatedRoute, private profileAnimationService: ProfileAnimationService){
   }
 
   decideAnimation() {
     switch(this.currentComponent){
-      case 'HomeComponent' :
-        this.pofileAnimation()
-        break
       case 'CreateComponent' :
       case 'EditComponent' :
         this.submitAnimation()
@@ -45,10 +42,6 @@ export class MouseWheelDirective implements OnInit {
     }
   }
 
-  @HostListener("window:scroll", ['$event'])
-  onWindowScroll() {
-    this.calculateScrollAmount()
-  }
 
   @HostListener('wheel', ['$event']) 
   onWheel(e) {
@@ -96,25 +89,6 @@ export class MouseWheelDirective implements OnInit {
       this.extensionComponent.currentSection = 'extensionSection'
     }else{
       this.isMobile = false
-    }
-  }
-
-  pofileAnimation(){
-    if(this.authService.isLoggedIn){
-      if(!this.profileAnimationService.isAnimated){
-        if(this.scrollDir == 1) {
-          this.profileAnimationService.isAnimated = true
-          this.profileAnimationService.animationTimeout = setTimeout(() => {
-              this.profileAnimationService.isDisplayed = true
-          }, 4100);
-        }
-      }else{
-        if (this.scrollDir == -1 && window.scrollY == 0) {
-          clearTimeout(this.profileAnimationService.animationTimeout)
-          this.profileAnimationService.isAnimated = false
-          this.profileAnimationService.isDisplayed = false
-        }
-      }
     }
   }
 
