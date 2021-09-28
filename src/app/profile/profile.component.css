@@ -234,6 +234,12 @@ h1{
     .user-info * {
         margin-top: 0.6vh;
     }
+    .user-info{
+        font-size: 7vh;
+    }
+    .user-info h5{
+        font-size: 10vh;
+    }
 }
 @media (max-width: 724px){
     .logo-container{

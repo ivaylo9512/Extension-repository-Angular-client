@@ -9,7 +9,7 @@ pagination-template li{
     margin-right: 0.2vw;
     border-radius: 0;
     cursor: pointer;
-    padding: 0.5vh 0.6vw;
+    padding: 0.5vw 0.7vw;
     text-shadow: 0 0 0.07vw black;
 }
 pagination-template li.current{
@@ -101,4 +101,21 @@ input:-ms-input-placeholder{
 
 input::-webkit-input-placeholder{
     color:#999
+}
+
+@media (max-width: 724px){
+    pagination-template li{
+        padding: 2vw 2.8vw;
+    }
+    pagination-template li.current{
+        box-shadow: 0 0 0.35vw 0.35vw black;
+    }
+}
+@media (min-width: 724px) and (max-width: 1281px) {
+    pagination-template li{
+        padding: 1.3vw 1.5vw;
+    }
+    pagination-template li.current{
+        box-shadow: 0 0 0.2vw 0.2vw black;
+    }
 }

@@ -84,6 +84,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    text-align: center;
 }
 .extension-info{
     width: 100%;
@@ -107,6 +108,7 @@
     text-align: center;
     color: black;
     box-sizing: border-box;
+    font-weight: bold;
 }
 .circle{
     bottom: 0;
@@ -153,11 +155,7 @@
     padding-bottom: 5%;
     transition: 6s;
 }
-@media (max-width: 1200px) {
-    .info-container {
-        width: 37.5%;
-        padding-bottom: 37.5%;
-    }
+@media (max-width: 1281px) {
     .extensions-container .hover-circle{
         display: none;
     }
@@ -175,14 +173,35 @@
         height: 57%;
     }
     .name{
-        text-align: center;
-        padding-left: 0;
-        width: 100%;
+        width: 95%;
+        padding: 6% 5%;
+        margin-top: 0;
     }
     .rating i {
         font-size: 5vh;
     }
     .extensions-container{
         display: block;
+    }
+}
+@media (max-width: 724px) {
+    .info-container {
+        width: 90%;
+        padding-bottom: 90%;
+    }
+    .extensions-container > div{
+        padding-bottom: 4vh;
+    }
+}
+@media (min-width: 724px) and (max-width: 1281px) {
+    .info-container {
+        width: 37.5%;
+        padding-bottom: 37.5%;
+    }
+    .name{
+        font-size: 8vh;
+    }
+    .extension-info  p{
+        font-size: 6vh;
     }
 }
