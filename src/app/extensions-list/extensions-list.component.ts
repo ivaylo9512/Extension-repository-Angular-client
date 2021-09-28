@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChildren, ElementRef, QueryList, ViewChild, ChangeDetectorRef, HostListener} from '@angular/core';
+import { Component, OnInit, ViewChildren, ElementRef, QueryList, ViewChild, ChangeDetectorRef, HostListener, ViewEncapsulation} from '@angular/core';
 import { User } from '../services/user.service'
 import { ExtensionsService, Extension } from '../services/extensions.service'
 import { environment } from '../../environments/environment';
 import { ProfileAnimationService } from '../services/profile.animation.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-extensions-list',
@@ -11,7 +12,6 @@ import { ProfileAnimationService } from '../services/profile.animation.service';
 })
 export class ExtensionsListComponent implements OnInit {
   @HostListener('window:resize', ['$event'])
- 
   onResize() {
     this.handleExtensionsDescription(this.extensionDescriptions)
   }
@@ -20,18 +20,21 @@ export class ExtensionsListComponent implements OnInit {
   user: User
   extensions: Extension[]
   admin: boolean
-  homeComponent: boolean
   baseUrl: string
 
   @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<any>
   @ViewChild('extensionsContainer') extensionsContainer: ElementRef
 
-  constructor(private extensionsService: ExtensionsService, private cdRef: ChangeDetectorRef, private profileAnimationService: ProfileAnimationService) {
+  constructor(private extensionsService: ExtensionsService, private route: ActivatedRoute, private cdRef: ChangeDetectorRef, private profileAnimationService: ProfileAnimationService) {
     this.baseUrl = environment.baseUrl
-    this.extensionsService.config.itemsPerPage = 8
   }
 
   ngOnInit() {
+    this.extensionsService.component = this.route.component['name']
+  }
+
+  ngOnDestroy() {
+    this.extensionsService.component = undefined
   }
 
   fixOverflow(node){  
@@ -65,7 +68,7 @@ export class ExtensionsListComponent implements OnInit {
       description.nativeElement.innerHTML = this.extensionsService.totalExtensions[i].description
       this.fixOverflow(description)
     })
-    if(this.homeComponent && !this.profileAnimationService.isDisplayed){
+    if(this.extensionsService.component == 'HomeComponent' && !this.profileAnimationService.isDisplayed){
       this.extensionsContainer.nativeElement.style.display = "none"        
     }
   }

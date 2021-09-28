@@ -3,7 +3,6 @@ import { AuthService } from '../services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProfileAnimationService } from '../services/profile.animation.service';
 
-
 @Directive({ selector: '[mouseWheel]' })
 export class MouseWheelDirective implements OnInit {
   submitComponent = {
@@ -85,7 +84,7 @@ export class MouseWheelDirective implements OnInit {
   }
 
   checkIfMobileScreen(){
-    if(window.innerWidth < 1200){
+    if(window.innerWidth < 1281){
       this.isMobile = true
 
       this.profileAnimationService.isDisplayed = true
@@ -105,7 +104,6 @@ export class MouseWheelDirective implements OnInit {
       if(!this.profileAnimationService.isAnimated){
         if(this.scrollDir == 1) {
           this.profileAnimationService.isAnimated = true
-
           this.profileAnimationService.animationTimeout = setTimeout(() => {
               this.profileAnimationService.isDisplayed = true
           }, 4100);

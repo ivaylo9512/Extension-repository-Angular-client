@@ -17,7 +17,7 @@
         <ul *ngIf="this.authService.isLoggedIn && this.authService.isAdmin">
             <ul class="user">
                 <li><a routerLink="/login" (click)="this.authService.logout()">logout</a></li>
-                <li><a [routerLink]="['/home/profile', this.authService.id]">{{this.authService.username}}</a>
+                <li><a [routerLink]="['/profile', this.authService.id]">{{this.authService.username}}</a>
             </ul>
             <li><a routerLink="/home">Home</a></li>
             <li><a routerLink="/discover">Discover</a></li>

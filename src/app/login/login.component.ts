@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
         this.authService.setUserDetails(data.body)
         this.router.navigate([this.returnUrl])
       },
-      err  => this.error = err
+      err  => this.error = err.error
     );
   }
 
