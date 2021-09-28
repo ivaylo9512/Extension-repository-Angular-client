@@ -87,14 +87,13 @@ export class ProfileComponent implements OnInit {
 
   toggleInfo(){
     this.isInfoToggled = !this.isInfoToggled
-    this.handleUserInfo()
   }
 
   handleUserInfo(){
     const node = this.userInfo.last.nativeElement
     node.textContent = this.user.info
 
-    if(window.innerWidth > 1200){
+    if(window.innerWidth > 1281){
       clearInterval(this.changeInterval)
 
       if(this.isInfoToggled){
