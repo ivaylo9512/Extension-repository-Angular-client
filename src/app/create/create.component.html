@@ -1,6 +1,6 @@
-<div class="mouse-wheel" mouseWheel>
+<section class="mouse-wheel" submitScroll>
     <section class="cover-section" *ngIf="!this.wheelDirective.isMobile"> 
-        <div class="input">
+        <div class="input-container">
             <label for="cover" class="as-field">
                 <i class="fas fa-image"></i> 
                 <span>Cover:</span>
@@ -19,17 +19,21 @@
     </section>
     <section class="extension-section">
         <div class="extension-container" [ngClass]="{'fade-in' : this.wheelDirective.submitComponent.currentSection != 'coverSection'}" #extensionSection> 
-            <div *ngIf="!this.wheelDirective.isMobile" #tagsContainer (click)="focusInput(this)" class="tags">
-                <div *ngFor = "let tag of tags" (click)="removeTag(tag)" ><i class="fas fa-tags"></i>{{tag}}</div>
-                <input [ngClass]="{'left' : tags.length > 0}" [formControl]="tagsInput"  placeholder="Tags" #tagsInputElmnt>
+            <div *ngIf="!this.wheelDirective.isMobile" #tagsContainer class="tags">
+                <div *ngFor = "let tag of tags" class="tag" (click)="removeTag(tag)" ><i class="fas fa-tags"></i>{{tag}}</div>
+                <div class='tag-input' [ngClass]="{'fixed' : tags.length == 0 }">
+                    <input [formControl]="tagsInput" (keyup)="tagInput($event)" placeholder="Tags" #tagsInputElmnt>
+                    <span  *ngIf="errors.tag">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {{errors.tag}}
+                    </span>
+                </div>
             </div>
-            <div class="info-container">
+            <div class="logo-container">
                 <div class="circle-container">
                     <div class="hover-circle"></div>
                 </div>
-                <div class="info-box">
-                    <img class="logo-box" [src]="getSanitizeUrl(logoURL)" *ngIf="logoURL"/>
-                </div>
+                <img [src]="getSanitizeUrl(logoURL)" *ngIf="logoURL"/>
                 <div class="submit-menu">
                     <input name="file" (change)="addFile($event)" type="file" id="file" ngModel required>
                     <label for="file">
@@ -47,68 +51,71 @@
             </div>
             <div class="extension">
                 <div class="github-container">
-                    <div class="github" *ngIf="gitHub">
+                    <div class="github" *ngIf="github">
                         <span>User:</span>
                         <span>Last commit</span>
                         <span>Open issues</span>
                         <span>Pull requests</span>
-                        <span>{{gitHub.user}}</span>
-                        <span>{{gitHub.lastCommit | date: 'yyyy-MM-dd'}}</span>
-                        <span>{{gitHub.openIssues}}</span>
-                        <span>{{gitHub.pullRequests}}</span>
+                        <span>{{github.user}}</span>
+                        <span>{{github.lastCommit | date: 'yyyy-MM-dd'}}</span>
+                        <span>{{github.openIssues}}</span>
+                        <span>{{github.pullRequests}}</span>
                     </div>
                 </div>
-                <div class="extension-info-container">                
-                    <input [formControl]="nameInput" [value]="name" placeholder="Name" class="name">
-                    <div class="loading-container">
-                        <i *ngIf="nameAvailable === undefined" class="fas fa-circle-notch fa-spin"></i>
+                <form [formGroup]="extensionForm" class="extension-info-container" (submit)="createExtension()">                
+                    <input name="name" formControlName="name" placeholder="Name" class="name">
+                    <div *ngIf="nameAvailable !== undefined" class="loading-container">
+                        <i *ngIf="nameAvailable === null" class="fas fa-circle-notch fa-spin"></i>
                         <i *ngIf="nameAvailable == true" class="fas fa-check"></i>
-                        <i *ngIf="nameAvailable == false" class="fas fa-times"></i>
+                        <i *ngIf="nameAvailable == false" class="fas fa-exclamation-triangle"></i>
+                        <span *ngIf="errors.name" class="error">{{errors.name}}</span>
                     </div>
-                    <input [formControl]="gitHubInput" name="github" type="text" placeholder="GitHub repo">
-                    <div class="loading-container">
-                        <i *ngIf="gitHubAvailable === undefined" class="fas fa-circle-notch fa-spin"></i>
-                        <i *ngIf="gitHubAvailable == true" class="fas fa-check"></i>
-                        <i *ngIf="gitHubAvailable == false" class="fas fa-times"></i>
+                    <input name="github" formControlName="github" type="text" placeholder="GitHub repo">
+                    <div *ngIf="githubAvailable !== undefined" class="loading-container">
+                        <i *ngIf="githubAvailable === null" class="fas fa-circle-notch fa-spin"></i>
+                        <i *ngIf="githubAvailable == true" class="fas fa-check"></i>
+                        <i *ngIf="githubAvailable == false" class="fas fa-exclamation-triangle"></i>
+                        <span *ngIf="errors.github" class="error">{{errors.github}}</span>
                     </div>
-                    <input class="version" [value]="version" [formControl]="versionInput" placeholder="Version">
-                    <div class="info">
-                        <textarea [value]="description" [formControl]="descriptionInput" placeholder="Description"></textarea>
-                    </div>
-                </div>
+                    <input class="version" name="version" formControlName="version" placeholder="Version">
+                    <div *ngIf="errors.version" class="error"><i class="fas fa-exclamation-triangle"></i>{{errors.version}}</div>
+                    <textarea name="description" formControlName="description" placeholder="Description"></textarea>
+                    <div *ngIf="errors.description" class="error"><i class="fas fa-exclamation-triangle"></i>{{errors.description}}</div>
+                    <div *ngIf="error" class="error"><i class="fas fa-exclamation-triangle"></i>{{error}}</div>
+                </form>
             </div>
             <div class="circle-container">
                 <span [ngClass]="{'animate' : this.wheelDirective.submitComponent.currentSection != 'coverSection'}" class="circle" id="circle"></span>
             </div>
         </div>
         <div class="extension-mobile">
-            <input [formControl]="nameInput" [value]="name" placeholder="Name" class="name">
-            <input [formControl]="gitHubInput" name="github" type="text" placeholder="GitHub repo">
-            <input [value]="version" [formControl]="versionInput" placeholder="Version">
+            <input [value]="name" placeholder="Name" class="name">
+            <input name="github" type="text" placeholder="GitHub repo">
+            <input [value]="version" placeholder="Version">
             <div class="info">
-                <textarea [value]="description" [formControl]="descriptionInput" placeholder="Description"></textarea>
+                <textarea [value]="description" placeholder="Description"></textarea>
             </div>
         </div>
     </section>
     <div *ngIf="this.wheelDirective.isMobile" class="github-container">
-        <div class="github" *ngIf="gitHub">
+        <div class="github" *ngIf="github">
             <span>User:</span>
             <span>Last commit</span>
             <span>Open issues</span>
             <span>Pull requests</span>
-            <span>{{gitHub.user}}</span>
-            <span>{{gitHub.lastCommit | date: 'yyyy-MM-dd'}}</span>
-            <span>{{gitHub.openIssues}}</span>
-            <span>{{gitHub.pullRequests}}</span>
+            <span>{{github.user}}</span>
+            <span>{{github.lastCommit | date: 'yyyy-MM-dd'}}</span>
+            <span>{{github.openIssues}}</span>
+            <span>{{github.pullRequests}}</span>
         </div>
     </div>
     <div *ngIf="this.wheelDirective.isMobile" #tagsContainer (click)="focusInput(this)" class="tags">
         <div *ngFor = "let tag of tags" (click)="removeTag(tag)" ><i class="fas fa-tags"></i>{{tag}}</div>
         <input [ngClass]="{'left' : tags.length > 0}" [formControl]="tagsInput"  placeholder="Tags" #tagsInputElmnt>
     </div>
-    <div *ngIf="gitHubAvailable === undefined" class="loading-animation">
+    <div *ngIf="githubAvailable === null || isLoading" class="loading-animation">
         <div>
             <i class="fas fa-circle-notch fa-spin"></i>
         </div>
     </div>
-</div>
+</section>
