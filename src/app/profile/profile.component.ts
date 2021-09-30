@@ -2,9 +2,11 @@ import { Component, OnInit, ViewChildren, ElementRef, QueryList, ViewChild, Chan
 import { UserService, User } from '../services/user.service'
 import { ExtensionsService, Extension } from '../services/extensions.service'
 import { ActivatedRoute } from '@angular/router';
-import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
+import { ProfileScrollDirective } from '../helpers/profile-scroll-directive';
 import { environment } from '../../environments/environment';
 import { ProfileAnimationService } from '../services/profile.animation.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile',
@@ -12,7 +14,7 @@ import { ProfileAnimationService } from '../services/profile.animation.service';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  @ViewChild(MouseWheelDirective) wheelDirective: MouseWheelDirective
+  @ViewChild(ProfileScrollDirective) wheelDirective: ProfileScrollDirective
  
   @HostListener('window:resize', ['$event'])
   onResize() {
@@ -26,6 +28,7 @@ export class ProfileComponent implements OnInit {
   baseUrl: string
   isInfoToggled: boolean
   changeInterval : any
+  subscription: Subject<void> = new Subject<void>();
 
   @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<any>
   @ViewChildren('userInfo') userInfo: QueryList<any>
@@ -48,6 +51,7 @@ export class ProfileComponent implements OnInit {
     }else{
       this.loggedUser = JSON.parse(localStorage.getItem('user'))
       this.profileAnimationService.isAnimated = false
+      this.profileAnimationService.isDisplayed = false
       if(this.loggedUser){
         this.getUser(this.loggedUser['id'])
       }
@@ -55,15 +59,18 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.profileAnimationService.isAnimated = undefined
-    this.profileAnimationService.isDisplayed = false
-    this.extensionsService.resetExtensions()
+    this.profileAnimationService.isAnimated = true
+    this.profileAnimationService.isDisplayed = true
+    clearTimeout(this.profileAnimationService.animationTimeout)
+    
+    this.subscription.next();
+    this.subscription.complete();
   }
 
   ngAfterViewInit() {
-    this.wheelDirective.profileComponent.profileHeight = this.profileSection.nativeElement.offsetHeight
+    this.wheelDirective.containerHeight = this.profileSection.nativeElement.offsetHeight
     this.cdRef.detectChanges()
-    this.userInfo.changes.subscribe(info => 
+    this.userInfo.changes.pipe(takeUntil(this.subscription)).subscribe(info => 
       this.handleUserInfo()
     )
   }
@@ -115,11 +122,11 @@ export class ProfileComponent implements OnInit {
   }
 
   getUser(id: number){
-    this.userService.getUser(id).subscribe(data => {
+    this.userService.getUser(id).pipe(takeUntil(this.subscription)).subscribe(data => {
       this.user = data
       this.user.rating = +this.user.rating.toFixed(2)
       
-      this.extensionsService.getUserExtensions()
+      this.extensionsService.getUserExtensions(this.subscription)
     })
   }
 }

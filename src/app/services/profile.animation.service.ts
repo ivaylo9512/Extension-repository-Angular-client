@@ -5,19 +5,9 @@ import { BehaviorSubject } from 'rxjs';
     providedIn: 'root'
 })
 export class ProfileAnimationService {
-    scrollYSubject = new BehaviorSubject<number>(0)
-    scrollY = this.scrollYSubject.asObservable()
-    isDisplayed: boolean
+    isDisplayed = true
+    isAnimated = true
+    circleTransform = 0
     animationTimeout: any
-    isAnimated: boolean
-    circleTransform: number
     isMobile: boolean
-
-    constructor(){
-        this.circleTransform = 0
-    }
-    
-    setScrollY(scrollY: number){
-        this.scrollYSubject.next(scrollY)
-    }
 }
