@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChildren, QueryList, ViewChild, ElementRef, Host
 import { ExtensionsService } from '../services/extensions.service';
 import { ActivatedRoute, Params, Route, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
+import { ExtensionScrollDirective } from '../helpers/extension-scroll.directive';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -17,7 +17,7 @@ export class ExtensionComponent implements OnInit {
   }
 
   @ViewChildren('extensionDescription') extensionDescription: QueryList<any>
-  @ViewChild(MouseWheelDirective) wheelDirective: MouseWheelDirective
+  @ViewChild(ExtensionScrollDirective) wheelDirective: ExtensionScrollDirective
   @ViewChild('extensionSection') extensionSection: ElementRef
   @ViewChild("slidingContainer") slidingContainer: ElementRef
 
@@ -36,8 +36,8 @@ export class ExtensionComponent implements OnInit {
     this.extension = extension
 
     if(!extension.coverLocation){
-      this.wheelDirective.extensionComponent.currentSection = 'extensionSection'
-      this.wheelDirective.extensionComponent.isCoverPresent = false
+      this.wheelDirective.currentSection = 'extensionSection'
+      this.wheelDirective.isCoverPresent = false
     }    
   }
 
@@ -47,8 +47,8 @@ export class ExtensionComponent implements OnInit {
       this.extensionService.currentExtension = data
     
       if(!data.coverLocation){
-        this.wheelDirective.extensionComponent.currentSection = 'extensionSection'
-        this.wheelDirective.extensionComponent.isCoverPresent = false
+        this.wheelDirective.currentSection = 'extensionSection'
+        this.wheelDirective.isCoverPresent = false
       }
     })
   }
@@ -90,8 +90,8 @@ export class ExtensionComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.wheelDirective.extensionComponent.slidingContainer = this.slidingContainer
-    this.wheelDirective.extensionComponent.extensionSection = this.extensionSection
+    this.wheelDirective.slidingContainer = this.slidingContainer
+    this.wheelDirective.extensionSection = this.extensionSection
     this.wheelDirective.checkIfMobileScreen()
     this.extensionDescription.changes.subscribe(descriptions => {
       this.fixOverflow(descriptions.toArray())

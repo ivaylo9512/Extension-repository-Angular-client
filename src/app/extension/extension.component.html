@@ -1,7 +1,7 @@
-<section mouseWheel>
+<section extensionScroll>
     <div class="cover" [ngStyle]="{'background-image':'url(' + baseUrl + 'api/files/download/' + extension.coverName + ')'}" *ngIf="extension.coverName && !wheelDirective.isMobile">
     </div>
-    <div #extensionSection [ngClass]="{'visible': !this.wheelDirective.extensionComponent.isCoverPresent, 'fade-in': this.wheelDirective.extensionComponent.currentSection != 'coverSection' }" class="extension-info">
+    <div #extensionSection [ngClass]="{'visible': !this.wheelDirective.isCoverPresent, 'fade-in': this.wheelDirective.currentSection != 'coverSection' }" class="extension-info">
         <div class="logo-container">
             <div class="hover-circle">
             </div>
@@ -35,9 +35,9 @@
             </div>
         </div>      
         <div class="circle-container">
-            <span [ngClass]="{'animate' : this.wheelDirective.extensionComponent.currentSection != 'coverSection' }" class="circle"></span>
+            <span [ngClass]="{'animate' : this.wheelDirective.currentSection != 'coverSection' }" class="circle"></span>
         </div>
-        <div #slidingContainer [ngClass]="{'slide-in' : this.wheelDirective.extensionComponent.currentSection == 'infoSection'}" class="sliding-info-container">
+        <div #slidingContainer [ngClass]="{'slide-in' : this.wheelDirective.currentSection == 'infoSection'}" class="sliding-info-container">
             <div class="github-info">
                 <span>Pull requests</span>
                 <span>Open issues</span>
@@ -47,7 +47,7 @@
                 <span>{{extension.lastCommit | date : 'yyyy-MM-dd'}}</span>
             </div>
             <div class="user-menu">
-                <a [href]="extension.fileLocation"><i class="fas fa-download"></i>Download</a>
+                <a [href]="baseUrl + 'api/files/download/' + extension.fileName"><i class="fas fa-download"></i>Download</a>
                 <div class="rating">
                     <div>
                         <button (click)="rateExtension('5')" [ngClass]="{'current' : extension.currentUserRatingValue >= 5}"><i class="fas fa-star"></i></button>
@@ -89,7 +89,7 @@
             </div>
         </div>
     </div>
-    <div [ngClass]="{'slide-in' : this.wheelDirective.extensionComponent.currentSection == 'infoSection'}" class="info-container">
+    <div [ngClass]="{'slide-in' : this.wheelDirective.currentSection == 'infoSection'}" class="info-container">
         <div class="tags">
             <a [routerLink]="['/tag', tag]" *ngFor="let tag of extension.tags">{{tag}}</a>
         </div>

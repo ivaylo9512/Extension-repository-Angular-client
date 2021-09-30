@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { ProfileComponent } from '../profile/profile.component';
 import { FavExtensionsComponent } from '../fav-extensions/fav-extensions.component';
-import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
+import { ProfileScrollDirective } from '../helpers/profile-scroll-directive';
 import { ProfileAnimationService } from '../services/profile.animation.service';
 
 @Component({
@@ -22,7 +22,7 @@ import { ProfileAnimationService } from '../services/profile.animation.service';
   ],
 })
 export class HomeComponent implements OnInit {
-  @ViewChild(MouseWheelDirective) wheelDirective: MouseWheelDirective
+  @ViewChild(ProfileScrollDirective) wheelDirective: ProfileScrollDirective
 
   constructor(private authService: AuthService, private profileAnimationService: ProfileAnimationService) {
   }
@@ -31,9 +31,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnDestroy() {
-      clearTimeout(this.profileAnimationService.animationTimeout)
-      this.profileAnimationService.isAnimated = false
-      this.profileAnimationService.isDisplayed = false
   }
 
 }
