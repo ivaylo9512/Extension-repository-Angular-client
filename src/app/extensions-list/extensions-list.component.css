@@ -12,7 +12,7 @@
     padding-bottom: 16%;
     background-color: rgba(255, 255, 255, 0.3);
     z-index: 4;
-    box-shadow: 0 0.2vw 0.3vw 0 rgb(0 0 0 / 20%), 0 0.2vw 1.5vw 0 rgb(0 0 0 / 19%);
+    box-shadow: 0 0.2vw 0.2vw 0 rgb(0 0 0 / 20%), 0 0.2vw 0.5vw 0.2vw rgb(0 0 0 / 19%);
     border-radius: 8%;
     overflow: hidden;
     cursor: pointer;
@@ -113,8 +113,6 @@
 .circle{
     bottom: 0;
     right: 20%;
-}
-.circle{
     transform: translateZ(0) translateY(90%);
 }
 .circle.animate{
@@ -123,7 +121,6 @@
 }
 .extensions-container{
     position: relative;
-    overflow: hidden;
     padding-bottom: 2vh;
     width: 100%;
     visibility: visible;
@@ -132,14 +129,18 @@
 .extensions-container > div{
     width: 100%;
     padding-bottom: 8vh;
-    min-height: 75vh;
+    min-height: calc(73vh - 1vw);
 }
 :host.profile .extensions-container > div{
     min-height: auto;
     text-align: center;
 }
-.extensions-container .circle-container{
+.circle-container{
+    display: none;
     width: 5%;
+}
+:host.profile .circle-container{
+    display: block;
 }
 .extensions-container .circle{
     bottom: 0;
@@ -182,6 +183,9 @@
     }
     .extensions-container{
         display: block;
+    }
+    .extensions-container > div{
+        text-align: center;
     }
 }
 @media (max-width: 724px) {

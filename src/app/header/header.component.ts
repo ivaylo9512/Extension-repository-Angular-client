@@ -1,6 +1,5 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { AuthService } from '../services/auth.service';
-import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
 
 @Component({
   selector: 'app-header',
@@ -9,7 +8,6 @@ import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
 })
 export class HeaderComponent implements OnInit {
   @ViewChild('header') header: ElementRef
-  @ViewChild('mouseWheel') mouseWheel: MouseWheelDirective
 
   constructor(private authService: AuthService) { 
   }

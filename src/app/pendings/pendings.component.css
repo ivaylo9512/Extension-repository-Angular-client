@@ -10,31 +10,21 @@ h1{
     text-align: center;
     font-size: 8vh;
     width: 80%;
-    border-bottom: 1px solid black;
 }
 .circle{
     background: linear-gradient(#e66465, #9198e5);
     border-radius: 50%;
     display: inline-block;
     position: absolute;
-    transform: translateZ(0) translateY(0);
+    transform: translateZ(0) translateY(25%);
     transition: 5s all;
     width: 50%;
     padding-bottom: 50%;
     top: -20%;
     right: -10%;
-    animation: initial-translate 3s forwards; 
+    z-index: -1;
 }
-.extensions-container > div{
-    width: 100%;
-    padding-left: 10%;
-    margin-top: 0%;
-    padding-bottom: 8vh;
-    height: auto;
-    overflow: auto;
-    min-height: 75vh;
-}  
-@media (max-width: 1200px) {
+@media (max-width: 1281px) {
     .circle{
         width: 71%;
         padding-bottom: 71%;
@@ -45,15 +35,10 @@ h1{
     }
     h1{
         width: 68%;
-        border-bottom: 0.3vh solid black
     }
 }
-
-@keyframes initial-translate {
-    from {
-      transform: translateY(80%);
+@media (min-width: 724px) and (max-width: 1281px){
+    section{
+        padding-top: 10vh;
     }
-    to {
-      transform: translateY(0);
-    }
-  }
+}  

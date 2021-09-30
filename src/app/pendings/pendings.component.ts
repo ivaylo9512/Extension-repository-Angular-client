@@ -1,9 +1,10 @@
-import { Component, OnInit, ViewChildren, QueryList, HostListener, ViewChild, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
-import { ExtensionsService, Extension } from '../services/extensions.service';
-import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
+import { ExtensionsService } from '../services/extensions.service';
+import { ProfileScrollDirective } from '../helpers/profile-scroll-directive';
 import { Subscription } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { ProfileAnimationService } from '../services/profile.animation.service';
 
 @Component({
   selector: 'app-pendings',
@@ -11,25 +12,27 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./pendings.component.css']
 })
 export class PendingsComponent implements OnInit {
-  @ViewChild(MouseWheelDirective) wheelDirective: MouseWheelDirective
+  @ViewChild(ProfileScrollDirective) wheelDirective: ProfileScrollDirective
+  @ViewChild('pendingSection') pendingSection: ElementRef
 
   routeSubscription: Subscription
   baseUrl: string
 
-  constructor(private extensionsService: ExtensionsService, private cdRef: ChangeDetectorRef, private router: Router) { 
+  constructor(private extensionsService: ExtensionsService, private cdRef: ChangeDetectorRef, private router: Router, private profileAnimation: ProfileAnimationService) { 
     this.baseUrl = environment.baseUrl
     this.extensionsService.config.itemsPerPage = 16
   }
 
   ngOnInit() {
-    this.findPendings()
+    this.extensionsService.getPending()
+    this.wheelDirective.containerHeight = this.pendingSection.nativeElement.offsetHeight
   }
 
   ngOnDestroy() {
     if (this.routeSubscription) {  
       this.routeSubscription.unsubscribe();
    }
-   this.extensionsService.resetExtensions()
+   this.wheelDirective.multiplier = 5
   }
 
   ngAfterViewInit() {
@@ -39,12 +42,8 @@ export class PendingsComponent implements OnInit {
 
     this.routeSubscription = this.router.events.subscribe((e: any) => {
       if (e instanceof NavigationEnd) {
-        this.findPendings()
+        this.extensionsService.getPending()
       }
     })
-  }
-
-  findPendings(){
-    this.extensionsService.getPending()
   }
 }
