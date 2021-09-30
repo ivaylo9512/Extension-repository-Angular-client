@@ -19,16 +19,6 @@
     </section>
     <section class="extension-section">
         <div class="extension-container" [ngClass]="{'fade-in' : this.wheelDirective.submitComponent.currentSection != 'coverSection'}" #extensionSection> 
-            <div *ngIf="!this.wheelDirective.isMobile" #tagsContainer class="tags">
-                <div *ngFor = "let tag of tags" class="tag" (click)="removeTag(tag)" ><i class="fas fa-tags"></i>{{tag}}</div>
-                <div class='tag-input' [ngClass]="{'fixed' : tags.length == 0 }">
-                    <input [formControl]="tagsInput" (keyup)="tagInput($event)" placeholder="Tags" #tagsInputElmnt>
-                    <span  *ngIf="errors.tag">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        {{errors.tag}}
-                    </span>
-                </div>
-            </div>
             <div class="logo-container">
                 <div class="circle-container">
                     <div class="hover-circle"></div>
@@ -84,35 +74,21 @@
                     <div *ngIf="error" class="error"><i class="fas fa-exclamation-triangle"></i>{{error}}</div>
                 </form>
             </div>
+            <div #tagsContainer class="tags">
+                <div *ngFor = "let tag of tags" class="tag" (click)="removeTag(tag)" ><i class="fas fa-tags"></i>{{tag}}</div>
+                <div class='tag-input' [ngClass]="{'fixed' : tags.length == 0 }">
+                    <input [formControl]="tagsInput" (keyup)="tagInput($event)" placeholder="Tags" #tagsInputElmnt>
+                    <span  *ngIf="errors.tag">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {{errors.tag}}
+                    </span>
+                </div>
+            </div>
             <div class="circle-container">
                 <span [ngClass]="{'animate' : this.wheelDirective.submitComponent.currentSection != 'coverSection'}" class="circle" id="circle"></span>
             </div>
         </div>
-        <div class="extension-mobile">
-            <input [value]="name" placeholder="Name" class="name">
-            <input name="github" type="text" placeholder="GitHub repo">
-            <input [value]="version" placeholder="Version">
-            <div class="info">
-                <textarea [value]="description" placeholder="Description"></textarea>
-            </div>
-        </div>
     </section>
-    <div *ngIf="this.wheelDirective.isMobile" class="github-container">
-        <div class="github" *ngIf="github">
-            <span>User:</span>
-            <span>Last commit</span>
-            <span>Open issues</span>
-            <span>Pull requests</span>
-            <span>{{github.user}}</span>
-            <span>{{github.lastCommit | date: 'yyyy-MM-dd'}}</span>
-            <span>{{github.openIssues}}</span>
-            <span>{{github.pullRequests}}</span>
-        </div>
-    </div>
-    <div *ngIf="this.wheelDirective.isMobile" #tagsContainer (click)="focusInput(this)" class="tags">
-        <div *ngFor = "let tag of tags" (click)="removeTag(tag)" ><i class="fas fa-tags"></i>{{tag}}</div>
-        <input [ngClass]="{'left' : tags.length > 0}" [formControl]="tagsInput"  placeholder="Tags" #tagsInputElmnt>
-    </div>
     <div *ngIf="githubAvailable === null || isLoading" class="loading-animation">
         <div>
             <i class="fas fa-circle-notch fa-spin"></i>
