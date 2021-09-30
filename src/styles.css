@@ -2,22 +2,23 @@ Button{
     cursor: pointer;
 }
 pagination-template ul{
-    text-align:center;
+    text-align: center;
+    height: calc(1vw + 2vh);
+    font-size: 2vh;
+    margin-bottom: 2vh;
 }
 pagination-template li{
     display: inline-block;
     margin-right: 0.2vw;
-    border-radius: 0;
-    cursor: pointer;
-    padding: 0.5vw 0.7vw;
-    text-shadow: 0 0 0.07vw black;
 }
-pagination-template li.current{
+pagination-template li.current span{
     background: black;
     color: white;
     cursor: default;
     border-radius: 0.2vw;
+    padding: 0.5vw 0.7vw;
     box-shadow: 0 0 0.1vw 0.1vw black;
+    display: block;
 }
 pagination-template ul a:hover{
     background: rgba(0, 0, 0, 0.4);
@@ -25,6 +26,9 @@ pagination-template ul a:hover{
 pagination-template a{
     display: block;
     border-radius: 0;
+    cursor: pointer;
+    padding: 0.5vw 0.7vw;
+    text-shadow: 0 0 0.07vw black;
 }
 pagination-template .previous.disabled::before{
     content: '«';
@@ -104,18 +108,23 @@ input::-webkit-input-placeholder{
 }
 
 @media (max-width: 724px){
-    pagination-template li{
+    pagination-template li a,
+    pagination-template li.current span{
         padding: 2vw 2.8vw;
     }
-    pagination-template li.current{
+    pagination-template li.current span{
         box-shadow: 0 0 0.35vw 0.35vw black;
     }
 }
 @media (min-width: 724px) and (max-width: 1281px) {
-    pagination-template li{
+    pagination-template ul{
+        margin-bottom: 5vh;
+    }
+    pagination-template li a,
+    pagination-template li.current span{
         padding: 1.3vw 1.5vw;
     }
-    pagination-template li.current{
+    pagination-template li.current span{
         box-shadow: 0 0 0.2vw 0.2vw black;
     }
 }
