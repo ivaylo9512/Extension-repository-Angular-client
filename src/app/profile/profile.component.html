@@ -1,4 +1,4 @@
-<section [ngClass]="{ 'fade-in' : this.profileAnimationService.isAnimated }" mouseWheel class="profile-section" #profileSection>
+<section [ngClass]="{ 'fade-in' : this.profileAnimationService.isAnimated }" profileScroll class="profile-section" #profileSection>
     <section [ngStyle]="{ 'min-height' : !user ? '100vh' : 'auto' }" class="user-profile">
         <span *ngIf="!user" class="loading-animation">
             <div>
@@ -23,11 +23,19 @@
             </div>
         </div>
         <div class="circle-container">
-            <span [ngClass]="{'animate' : profileAnimationService.isAnimated}" [ngStyle]="{'transform': profileAnimationService.isAnimated && !wheelDirective.isMobile ? 'translateY(' + profileAnimationService.circleTransform / 5 + '%)' : wheelDirective.isMobile ? 'translate(-50%, -63%)' : 'translateY(90%)'}" class="circle" id="circle"></span>
+            <span [ngClass]="{'animate' : profileAnimationService.isAnimated}" [ngStyle]="{'transform': profileAnimationService.isAnimated && !wheelDirective.isMobile ? 'translateY(' + profileAnimationService.circleTransform / 10 + '%)' : wheelDirective.isMobile ? 'translate(-50%, -63%)' : 'translateY(90%)'}" class="circle" id="circle"></span>
         </div>
         <button (click)="toggleInfo()" class="info-button">
             <i class="fas fa-info"></i>
         </button>
     </section>
-    <app-extensions-list class="profile"></app-extensions-list>
+    <section>
+        <span *ngIf="!extensionsService.totalExtensions" class="loading-animation">
+            <div>
+                <i class="fas fa-circle-notch fa-spin"></i>
+            </div>
+        </span>
+        <app-extensions-list class="profile">
+        </app-extensions-list>
+    </section>
 </section>

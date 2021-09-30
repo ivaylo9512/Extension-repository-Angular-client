@@ -1,9 +1,4 @@
 <div [ngStyle]="{'display' : profileAnimationService.isDisplayed ? 'block' : 'none'}" #extensionsContainer class="extensions-container" id="extensions-section">
-    <span *ngIf="!extensionsService.totalExtensions" class="loading-animation">
-        <div>
-            <i class="fas fa-circle-notch fa-spin"></i>
-        </div>
-    </span>
     <div class="extensions">
         <div class="info-container" *ngFor="let extension of extensionsService.currentExtensions | paginate: extensionsService.config" [routerLink]="['/extension', extension.id]">
             <div class="hover-circle">
