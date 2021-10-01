@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChildren, QueryList, HostListener, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ExtensionsService } from '../services/extensions.service';
 import { FormControl } from '@angular/forms';
-import { debounceTime, switchMap } from 'rxjs/operators';
-import { MouseWheelDirective } from '../helpers/mouse-wheel.directive';
-import { Subscription } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { ProfileScrollDirective } from '../helpers/profile-scroll-directive';
+import { Subject, Subscription } from 'rxjs';
 import { Router, NavigationEnd } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { versions } from 'process';
+import { conditionallyCreateMapObjectLiteral } from '@angular/compiler/src/render3/view/util';
 
 @Component({
   selector: 'app-discover',
@@ -13,94 +15,65 @@ import { environment } from '../../environments/environment';
   styleUrls: ['./discover.component.css']
 })
 export class DiscoverComponent implements OnInit {
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.fixOverflow(this.extensionDescriptions)
-  }
-  @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<any>
   @ViewChild('discoverSection') discoverSection: ElementRef
-  @ViewChild(MouseWheelDirective) wheelDirective: MouseWheelDirective
+  @ViewChild(ProfileScrollDirective) wheelDirective: ProfileScrollDirective
 
   search: FormControl = new FormControl()
-  extensions: any[]
-  routeSubscription: Subscription
   baseUrl: string
-
-  config = {
-    id: 'custom',
-    itemsPerPage: 12,
-    currentPage: 1,
-    totalItems: null,
-    criteria: 'name',
-    search: ''
-  }
+  subscription: Subject<void> = new Subject<void>();
 
   constructor(private extensionsService: ExtensionsService, private cdRef: ChangeDetectorRef, private router: Router) {
-    this.extensions = undefined
     this.baseUrl = environment.baseUrl
+    this.extensionsService.config.itemsPerPage = 16
+    this.extensionsService.orderBy = 'name'
   }
 
   ngOnInit() {
-    this.findExtensions(1)
-    this.search.valueChanges.pipe(debounceTime(200)).subscribe(result => {
-      this.config.search = result
-      this.findExtensions(1)
-    }) 
+    this.subscribeToForm()
+    this.extensionsService.getAll(this.subscription)
   }
 
   ngOnDestroy() {
-    if (this.routeSubscription) {  
-      this.routeSubscription.unsubscribe();
-   }
+    this.resetView()   
   }
 
-  findExtensions(page: number){
-    this.extensionsService.getExtensions(this.config.search, this.config.criteria, (page - 1).toString() , this.config.itemsPerPage.toString()).subscribe(page => {
-      this.extensions = page.data
-      this.config.currentPage = page
-      this.config.totalItems = page.totalResults
-      this.wheelDirective.calculateScrollAmount()
-    })
-  
+  changeCriteria(e){
+    this.resetView()
+    this.extensionsService.orderBy = e.target.value
+    this.extensionsService.getAll(this.subscription)
   }
-  changeCriteria(value){
-    this.config.criteria = value.target.value
-    this.findExtensions(1)
+
+  subscribeToForm(){
+    this.search.valueChanges.pipe(debounceTime(200), takeUntil(this.subscription)).subscribe(result => {
+      this.extensionsService.resetExtensions()
+      this.extensionsService.nameQuery = result
+      this.extensionsService.getAll(this.subscription)
+    }) 
+  }
+
+  subscribeToRoute(){
+    this.router.events.pipe(takeUntil(this.subscription)).subscribe((e: any) => {
+      if (e instanceof NavigationEnd) {
+        this.resetView()   
+        this.extensionsService.getAll(this.subscription)
+      }
+    })
+  }
+
+  resetView(){
+    this.subscription.next()
+    this.subscription.complete()
+    this.subscription = new Subject<void>()
+    this.extensionsService.resetExtensions()
+    this.extensionsService.nameQuery = ''
+    this.search.setValue('')
+    this.extensionsService.orderBy = 'name'
+    this.subscribeToForm()
+    this.subscribeToRoute()
   }
 
   ngAfterViewInit() {
-    this.wheelDirective.checkIfMobileScreen()
-
-    this.extensionDescriptions.changes.subscribe(descriptions => {
-      this.fixOverflow(descriptions.toArray())
-    })
     this.cdRef.detectChanges()
-
-    this.routeSubscription = this.router.events.subscribe((e: any) => {
-      if (e instanceof NavigationEnd) {
-        this.findExtensions(1)
-      }
-    })
-  }
-
-  fixOverflow(descriptions){
-    descriptions.forEach((description, i) => {
-      description.nativeElement.textContent = this.extensions[i].description  
-       
-      let height = description.nativeElement.offsetHeight
-      let scrollHeight = description.nativeElement.scrollHeight
-      let text = description.nativeElement.textContent + '...'
-    
-      while(height < scrollHeight){
-        let words = text.split(' ')
-        words.pop()
-        words.pop()
-        text = words.join(' ') + '...'
-        
-        description.nativeElement.textContent = text
-        height = description.nativeElement.offsetHeight
-        scrollHeight = description.nativeElement.scrollHeight
-      }
-    })
+    this.subscribeToRoute()
   }
 }
