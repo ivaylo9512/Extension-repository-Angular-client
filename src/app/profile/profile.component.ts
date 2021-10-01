@@ -18,10 +18,10 @@ export class ProfileComponent implements OnInit {
  
   @HostListener('window:resize', ['$event'])
   onResize() {
-      this.handleUserInfo()
+      this.handleUserInfo(this.userInfo.last)
   }
 
-  loggedUser: any
+  loggedUser: User
   user: User
   extensions: Extension[]
   admin: boolean
@@ -31,9 +31,9 @@ export class ProfileComponent implements OnInit {
   subscription: Subject<void> = new Subject<void>();
 
   @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<any>
-  @ViewChildren('userInfo') userInfo: QueryList<any>
-  @ViewChild('extensionsContainer') extensionsContainer: ElementRef
-  @ViewChild('profileSection') profileSection: ElementRef
+  @ViewChildren('userInfo') userInfo: QueryList<ElementRef<HTMLElement>>
+  @ViewChild('extensionsContainer') extensionsContainer: ElementRef<HTMLElement>
+  @ViewChild('profileSection') profileSection: ElementRef<HTMLElement>
 
   constructor(private userService: UserService, private extensionsService: ExtensionsService, private route: ActivatedRoute, private cdRef: ChangeDetectorRef, private profileAnimationService: ProfileAnimationService) {
     this.baseUrl = environment.baseUrl
@@ -53,7 +53,7 @@ export class ProfileComponent implements OnInit {
       this.profileAnimationService.isAnimated = false
       this.profileAnimationService.isDisplayed = false
       if(this.loggedUser){
-        this.getUser(this.loggedUser['id'])
+        this.getUser(this.loggedUser.id)
       }
     }
   }
@@ -63,19 +63,23 @@ export class ProfileComponent implements OnInit {
     this.profileAnimationService.isDisplayed = true
     clearTimeout(this.profileAnimationService.animationTimeout)
     
-    this.subscription.next();
-    this.subscription.complete();
+    this.subscription.next()
+    this.subscription.complete()
   }
 
   ngAfterViewInit() {
     this.wheelDirective.containerHeight = this.profileSection.nativeElement.offsetHeight
     this.cdRef.detectChanges()
-    this.userInfo.changes.pipe(takeUntil(this.subscription)).subscribe(info => 
-      this.handleUserInfo()
+    this.subscribeToUserInfo()
+  }
+
+  subscribeToUserInfo(){
+    this.userInfo.changes.pipe(takeUntil(this.subscription)).subscribe((info : QueryList<ElementRef<HTMLElement>>)  => 
+      this.handleUserInfo(info.last)
     )
   }
 
-  fixOverflow(node){  
+  fixOverflow(node : HTMLElement){  
     let height = node.offsetHeight
     let scrollHeight = node.scrollHeight
     let text = node.textContent + '...'
@@ -94,10 +98,11 @@ export class ProfileComponent implements OnInit {
 
   toggleInfo(){
     this.isInfoToggled = !this.isInfoToggled
+    this.handleUserInfo(this.userInfo.last)
   }
 
-  handleUserInfo(){
-    const node = this.userInfo.last.nativeElement
+  handleUserInfo(userInfo : ElementRef<HTMLElement>){
+    const node = userInfo.nativeElement
     node.textContent = this.user.info
 
     if(window.innerWidth > 1281){

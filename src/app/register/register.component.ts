@@ -5,6 +5,9 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 
 @Component({
@@ -14,10 +17,10 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 })
 export class RegisterComponent implements OnInit {
   @ViewChild('password') 
-  password:ElementRef;
+  password:ElementRef<HTMLInputElement>;
 
   @ViewChild('repeatPassword') 
-  repeatPassword : ElementRef;
+  repeatPassword : ElementRef<HTMLInputElement>;
   
   errors : FieldErrors
   error : string
@@ -25,7 +28,8 @@ export class RegisterComponent implements OnInit {
   formData : FormData
   page : number
   filePlaceholder : string
-  
+  subscription : Subject<void> = new Subject<void>()
+
   constructor(private authService : AuthService ,private userService : UserService, private router : Router, private fb: FormBuilder) {
     this.userForm = this.fb.group({
       username: [''],
@@ -67,34 +71,38 @@ export class RegisterComponent implements OnInit {
     this.formData.set('country', country)
     this.formData.set('info', info)
 
-    this.userService.register(this.formData).subscribe(
+    this.userService.register(this.formData).pipe(takeUntil(this.subscription)).subscribe(
       res  => {
         localStorage.setItem('user', JSON.stringify(res))
         this.authService.setUserDetails(res)
         this.router.navigate(['home'])
 
       },
-      err => {
-        if(err.status == 422){
-          let page = 3; 
-          this.errors = err.error
-          const { username, email, password } = this.errors
-          
-          if(username || email){
-            page = 1
-          }else if(password){
-            page = 2;
-          }
-  
-          this.page = page;
-        }else{
-          this.error = err.error
-        }
+      (err : HttpErrorResponse) => {
+        this.handleError(err)
       });
+  }
+  
+  handleError(err :  HttpErrorResponse) {
+    if(err.status == 422){
+      let page = 3; 
+      this.errors = err.error
+      const { username, email, password } = this.errors
+      
+      if(username || email){
+        page = 1
+      }else if(password){
+        page = 2;
+      }
+  
+      this.page = page;
+    }else{
+      this.error = err.error
+    }
   }
 }
 
-interface FieldErrors{
+type FieldErrors = {
   username?: string,
   email?: string,
   password?: string,
