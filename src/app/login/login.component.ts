@@ -23,10 +23,10 @@ export class LoginComponent implements OnInit {
     const password = userForm.controls['password'].value
 
     this.authService.login(username, password).subscribe(
-      data => {
-        localStorage.setItem('Authorization', data.headers.get('Authorization'))
-        localStorage.setItem('user', JSON.stringify(data.body))
-        this.authService.setUserDetails(data.body)
+      res => {
+        localStorage.setItem('Authorization', res.headers.get('Authorization'))
+        localStorage.setItem('user', JSON.stringify(res.body))
+        this.authService.setUserDetails(res.body)
         this.router.navigate([this.returnUrl])
       },
       err  => this.error = err.error
