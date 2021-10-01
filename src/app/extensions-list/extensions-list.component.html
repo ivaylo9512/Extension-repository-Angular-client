@@ -34,10 +34,10 @@
             <span [ngStyle]="{'transform': profileAnimationService.isAnimated ? 'translateY(' + profileAnimationService.circleTransform * 6.5 + '%)' : 'translateY(0)'}" class="circle second"></span>
         </div>
     </div>
-    <pagination-template #p="paginationApi" (pageChange)="extensionsService.getNextExtensions($event)">
+    <pagination-template #p="paginationApi" (pageChange)="extensionsService.getNextExtensions($event, subscription)">
         <ul class="pagination-list">
             <li class="previous" *ngIf="!p.isFirstPage()">
-                <a (click)="extensionsService.getNextExtensions(extensionsService.config.currentPage - 1)">
+                <a (click)="extensionsService.getNextExtensions(extensionsService.config.currentPage - 1, subscription)">
                     <span>Prev</span>
                 </a>
             </li>
@@ -48,7 +48,7 @@
                 <span *ngIf="p.getCurrent() === page.value">{{ page.label }}</span>
             </li>
             <li class="next" *ngIf="!p.isLastPage()">
-                <a *ngIf="!p.isLastPage()" (click)="extensionsService.getNextExtensions(extensionsService.config.currentPage + 1)">
+                <a *ngIf="!p.isLastPage()" (click)="extensionsService.getNextExtensions(extensionsService.config.currentPage + 1, subscription)">
                     <span>Next</span>
                 </a>
             </li>              

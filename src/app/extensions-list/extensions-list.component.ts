@@ -4,6 +4,8 @@ import { ExtensionsService, Extension } from '../services/extensions.service'
 import { environment } from '../../environments/environment';
 import { ProfileAnimationService } from '../services/profile.animation.service';
 import { ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-extensions-list',
@@ -16,31 +18,34 @@ export class ExtensionsListComponent implements OnInit {
     this.handleExtensionsDescription(this.extensionDescriptions)
   }
 
-  loggedUser: any
-  user: User
-  extensions: Extension[]
-  admin: boolean
-  baseUrl: string
+  baseUrl : string
+  subscription : Subject<void> = new Subject<void>();
 
-  @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<any>
-  @ViewChild('extensionsContainer') extensionsContainer: ElementRef
+  @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<ElementRef<HTMLElement>>
+  @ViewChild('extensionsContainer') extensionsContainer: ElementRef<HTMLElement>
 
   constructor(private extensionsService: ExtensionsService, private route: ActivatedRoute, private cdRef: ChangeDetectorRef, private profileAnimationService: ProfileAnimationService) {
     this.baseUrl = environment.baseUrl
   }
 
   ngOnInit() {
+    this.extensionsService.resetExtensions()
     this.extensionsService.component = this.route.component['name']
   }
 
   ngOnDestroy() {
+    this.subscription.next()
+    this.subscription.complete()
     this.extensionsService.component = undefined
+    this.extensionsService.resetExtensions()
   }
 
-  fixOverflow(node){  
-    let height = node.nativeElement.offsetHeight
-    let scrollHeight = node.nativeElement.scrollHeight
-    let text = node.nativeElement.innerHTML + '...'
+  fixOverflow(info : ElementRef<HTMLElement>){ 
+    const node = info.nativeElement
+
+    let height = node.offsetHeight
+    let scrollHeight = node.scrollHeight
+    let text = node.innerHTML + '...'
   
     while(height < scrollHeight){
       let words = text.split(' ')
@@ -48,26 +53,31 @@ export class ExtensionsListComponent implements OnInit {
       words.pop()
       text = words.join(' ') + '...'
       
-      node.nativeElement.innerHTML = text
-      height = node.nativeElement.offsetHeight
-      scrollHeight = node.nativeElement.scrollHeight
+      node.innerHTML = text
+      height = node.offsetHeight
+      scrollHeight = node.scrollHeight
     }
   }
   
   ngAfterViewInit() {
-    this.extensionDescriptions.changes.subscribe(descriptions => {
-      this.handleExtensionsDescription(descriptions.toArray())
-    })
-
+    this.addDescriptionsEvent()
     this.cdRef.detectChanges()
   }
 
-  handleExtensionsDescription(descriptions){
+  addDescriptionsEvent(){
+    this.extensionDescriptions.changes.pipe(takeUntil(this.subscription)).subscribe((descriptions : QueryList<ElementRef<HTMLElement>>) => {
+      this.handleExtensionsDescription(descriptions)
+    })
+  }
+
+  handleExtensionsDescription(descriptions : QueryList<ElementRef<HTMLElement>>){
     this.extensionsContainer.nativeElement.style.display = "block"
+
     descriptions.forEach((description, i) => {
-      description.nativeElement.innerHTML = this.extensionsService.totalExtensions[i].description
+      description.nativeElement.textContent = this.extensionsService.totalExtensions[i].description
       this.fixOverflow(description)
     })
+
     if(this.extensionsService.component == 'HomeComponent' && !this.profileAnimationService.isDisplayed){
       this.extensionsContainer.nativeElement.style.display = "none"        
     }
