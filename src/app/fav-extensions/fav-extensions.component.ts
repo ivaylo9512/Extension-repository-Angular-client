@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild, ViewChildren, QueryList, ElementRef, ChangeDetectorRef, HostListener } from '@angular/core';
-import { ExtensionsService } from '../services/extensions.service';
+import { Extension, ExtensionsService } from '../services/extensions.service';
 import { AuthService } from '../services/auth.service';
 import { environment } from '../../environments/environment';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-fav-extensions',
@@ -14,13 +16,14 @@ export class FavExtensionsComponent implements OnInit {
     this.fixOverflow(this.extensionDescriptions)
   }
 
-  @ViewChild('backgroundsContainer') backgroundsContainer: ElementRef
-  @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<any>
+  @ViewChild('backgroundsContainer') backgroundsContainer: ElementRef<HTMLElement>
+  @ViewChildren('extensionDescriptions') extensionDescriptions: QueryList<ElementRef<HTMLElement>>
 
-  extensions: any[]
+  extensions: Extension[]
   currentIndex: number
   initial: boolean
   baseUrl: string
+  subscription : Subject<void> = new Subject<void>()
 
   constructor(private authService: AuthService, private extensionsService: ExtensionsService, private cdRef: ChangeDetectorRef) { 
     this.currentIndex = 0
@@ -30,12 +33,16 @@ export class FavExtensionsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.extensionsService.getFeatured().subscribe(data => {
+    this.getExtensions()
+  }
+
+  getExtensions(){
+    this.extensionsService.getFeatured().pipe(takeUntil(this.subscription)).subscribe(data => {
       this.extensions = data
       this.setSlideShow()
     })
   }
-
+  
   setSlideShow(){
     const backgrounds = this.backgroundsContainer.nativeElement.children
 
@@ -67,20 +74,33 @@ export class FavExtensionsComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.extensionDescriptions.changes.subscribe(descriptions => {
+    this.subscribeToDescriptions()
+  }
+
+  subscribeToDescriptions(){
+    this.extensionDescriptions.changes.pipe(takeUntil(this.subscription)).subscribe(descriptions => {
       this.fixOverflow(descriptions.toArray())
       this.cdRef.detectChanges()
     })
   }
 
-  fixOverflow(descriptions){
+  ngOnDestroy(){
+    this.subscription.next()
+    this.subscription.complete()
+  }
+
+  fixOverflow(descriptions : QueryList<ElementRef<HTMLElement>>){
     this.initial = true
     descriptions.forEach((description, i) => {
-      description.nativeElement.innerHTML = this.extensions[i].description  
+      const node = description.nativeElement
+      const container = node.parentElement.parentElement
+
+      container.style.display = 'block'
+      node.textContent = this.extensions[i].description  
        
-      let height = description.nativeElement.offsetHeight
-      let scrollHeight = description.nativeElement.scrollHeight
-      let text = description.nativeElement.innerHTML + '...'
+      let height = node.offsetHeight
+      let scrollHeight = node.scrollHeight
+      let text = node.textContent + '...'
     
       while(height < scrollHeight){
         let words = text.split(' ')
@@ -88,9 +108,13 @@ export class FavExtensionsComponent implements OnInit {
         words.pop()
         text = words.join(' ') + '...'
         
-        description.nativeElement.innerHTML = text
-        height = description.nativeElement.offsetHeight
-        scrollHeight = description.nativeElement.scrollHeight
+        node.textContent = text
+        height = node.offsetHeight
+        scrollHeight = node.scrollHeight
+      }
+
+      if(i != this.currentIndex){
+        container.style.display = 'none'
       }
     })
     this.initial = false
