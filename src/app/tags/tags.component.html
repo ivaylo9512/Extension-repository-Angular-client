@@ -1,69 +1,10 @@
-<section mouseWheel>
-    <span *ngIf="!extensions" class="loading-animation">
+<section extensionScroll>
+    <span *ngIf="extensionsService.config.totalItems == null || extensionsService.config.isLoading" class="loading-animation">
         <div>
             <i class="fas fa-circle-notch fa-spin"></i>
         </div>
     </span>
-    <h1>Extensions found: {{config.totalItems}}</h1>
+    <h1>Extensions found: {{extensionsService.config.totalItems}}</h1>
     <span class="circle first"></span>
-    <span *ngIf="this.wheelDirective.isMobile && extensions" [ngStyle]="{'transform': 'translateY(' + (-this.wheelDirective.scrolledAmount * 13) + '%)', 'transition': this.wheelDirective.scrolledAmount == 0 ? '0s all' : '5s all'}" class="circle second"></span>
-    <span *ngIf="this.wheelDirective.isMobile && extensions" [ngStyle]="{'transform': 'translateY(' + (-this.wheelDirective.scrolledAmount * 16.5) + '%)', 'transition': this.wheelDirective.scrolledAmount == 0 ? '0s all' : '5s all'}" class="circle third"></span>
-    <div class="extensions">
-        <div class="info-container" *ngFor="let extension of extensions | paginate: config" [routerLink]="['/extension', extension.id]">
-            <div class="info-box">
-                <div class="hover-circle">
-                </div>
-
-                <div class="logo-container">
-                    <img class="logo-box" [src]="baseUrl + 'api/files/download/' + extension.imageName" />
-                </div>
-
-                <div class="extension-info">
-                    <div class="name">
-                        <b>{{extension.name}}</b>
-                    </div>
-                    <p #extensionDescriptions>
-                      {{extension.description}}
-                    </p>
-                    <div class="rating">
-                        <i *ngIf="extension.rating == 0.5" class="fas fa-star-half"></i>
-                        <i *ngIf="extension.rating >= 1" class="fas fa-star"></i>
-                        <i *ngIf="extension.rating == 1.5" class="fas fa-star-half"></i>
-                        <i *ngIf="extension.rating >= 2" class="fas fa-star"></i>
-                        <i *ngIf="extension.rating == 2.5" class="fas fa-star-half"></i>
-                        <i *ngIf="extension.rating >= 3" class="fas fa-star"></i>
-                        <i *ngIf="extension.rating == 3.5" class="fas fa-star-half"></i>
-                        <i *ngIf="extension.rating >= 4" class="fas fa-star"></i>
-                        <i *ngIf="extension.rating == 4.5" class="fas fa-star-half"></i>
-                        <i *ngIf="extension.rating >= 5" class="fas fa-star"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="pagination">
-        <pagination-template #p="paginationApi" [id]="config.id" (pageChange)="changePage($event)">
-            <ul class="pagination-list">
-                <li class="previous" [class.disabled]="p.isFirstPage()">
-                    <a  *ngIf="!p.isFirstPage()" (click)="p.previous()">
-                        <span>Prev</span>
-                    </a>
-                    <span *ngIf="p.isFirstPage()">Prev</span>
-                </li>
-                <li *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value">
-                    <a (click)="p.setCurrent(page.value)" *ngIf="p.getCurrent() !== page.value">{{ page.label }}
-                        <span *ngIf="p.getCurrent() === page.value">{{ page.label }}</span>              
-                    </a>
-                    <span *ngIf="p.getCurrent() === page.value">{{ page.label }}</span>
-                </li>
-                <li class="next" [class.disabled]="p.isLastPage()">
-                    <a *ngIf="!p.isLastPage()" (click)="p.next()">
-                        <span>Next</span>
-                    </a>
-                    <span *ngIf="p.isLastPage()">Next</span>
-                </li>              
-                
-            </ul>
-        </pagination-template>
-    </div>
+    <app-extensions-list></app-extensions-list>
 </section>
