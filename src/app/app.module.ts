@@ -9,37 +9,41 @@ import { HomeComponent } from './home/home.component'
 import { RequestsInterceptor } from './helpers/requests-interceptor'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProfileComponent } from './profile/profile.component';
+import { ExtensionsListComponent } from './extensions-list/extensions-list.component';
 import { ExtensionComponent } from './extension/extension.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { DiscoverComponent } from './discover/discover.component';
 import { PendingsComponent } from './pendings/pendings.component';
 import { AdminComponent } from './admin/admin.component';
 import { CreateComponent } from './create/create.component';
-import { EditComponent } from './edit/edit.component';
 import { HeaderComponent } from './header/header.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TagsComponent } from './tags/tags.component';
 import { RegisterComponent } from './register/register.component';
-import { MouseWheelDirective } from './helpers/mouse-wheel.directive';
 import { FavExtensionsComponent } from './fav-extensions/fav-extensions.component';
 import { AuthGuard } from './helpers/auth.guard';
+import { ProfileScrollDirective } from './helpers/profile-scroll-directive';
+import { SubmitScrollDirective } from './helpers/submit-scroll.directive';
+import { ExtensionScrollDirective } from './helpers/extension-scroll.directive';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
+    ExtensionsListComponent,
     ProfileComponent,
     ExtensionComponent,
     DiscoverComponent,
     PendingsComponent,
     AdminComponent,
     CreateComponent,
-    EditComponent,
     HeaderComponent,
     TagsComponent,
     RegisterComponent,
-    MouseWheelDirective,
+    SubmitScrollDirective,
+    ProfileScrollDirective,
+    ExtensionScrollDirective,
     FavExtensionsComponent,
   ],
   imports: [
@@ -65,11 +69,6 @@ import { AuthGuard } from './helpers/auth.guard';
       { 
         path: 'admin', 
         component: AdminComponent,
-        canActivate: [AuthGuard]
-      },
-      { 
-        path: 'edit/:id', 
-        component: EditComponent,
         canActivate: [AuthGuard]
       },
       { 
