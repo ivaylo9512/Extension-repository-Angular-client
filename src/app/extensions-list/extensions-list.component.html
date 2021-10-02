@@ -1,6 +1,6 @@
 <div [ngStyle]="{'display' : profileAnimationService.isDisplayed ? 'block' : 'none'}" #extensionsContainer class="extensions-container" id="extensions-section">
     <div class="extensions">
-        <div class="info-container" *ngFor="let extension of extensionsService.currentExtensions | paginate: extensionsService.config" [routerLink]="['/extension', extension.id]">
+        <div class="info-container" *ngFor="let extension of extensionsService.currentExtensions | paginate: extensionsService.config" (click)="extensionsService.currentExtension = extension" [routerLink]="['/extension', extension.id]">
             <div class="hover-circle">
             </div>
             <div class="logo-container">
@@ -35,7 +35,7 @@
         </div>
     </div>
     <pagination-template #p="paginationApi" (pageChange)="extensionsService.getNextExtensions($event, subscription)">
-        <ul class="pagination-list">
+        <ul *ngIf="extensionsService.config.totalItems != null && !extensionsService.config.isLoading" class="pagination-list">
             <li class="previous" *ngIf="!p.isFirstPage()">
                 <a (click)="extensionsService.getNextExtensions(extensionsService.config.currentPage - 1, subscription)">
                     <span>Prev</span>

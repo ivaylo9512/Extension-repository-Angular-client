@@ -18,7 +18,7 @@
     cursor: pointer;
     position: relative;
     display: inline-block;
-    margin: 8vh 2.5% 0 2.5%;
+    margin: 4vh 2.5% 4vh 2.5%;
 }
 .info-container:focus {
     outline: 0;
@@ -129,11 +129,10 @@
 .extensions-container > div{
     width: 100%;
     padding-bottom: 8vh;
-    min-height: calc(73vh - 1vw);
+    min-height: calc(70vh - 1vw);
 }
 :host.profile .extensions-container > div{
     min-height: auto;
-    text-align: center;
 }
 .circle-container{
     display: none;
@@ -171,21 +170,14 @@
     }
     .extension-info p{
         text-align: center;
-        height: 57%;
     }
     .name{
         width: 95%;
-        padding: 6% 5%;
+        padding: 6% 2.5% 1% 2.5%;
         margin-top: 0;
-    }
-    .rating i {
-        font-size: 5vh;
     }
     .extensions-container{
         display: block;
-    }
-    .extensions-container > div{
-        text-align: center;
     }
 }
 @media (max-width: 724px) {
@@ -196,6 +188,22 @@
     .extensions-container > div{
         padding-bottom: 4vh;
     }
+    .extensions-container > div{
+        text-align: center;
+    }
+    .name{
+        font-size: 8vw;
+    }
+    .extension-info  p{
+        font-size: 5vw;
+        height: 59%;
+    }
+    .rating i {
+        font-size: 9vw;
+    }
+    .extensions-container > div{
+        min-height: calc(90vh - 46vw); 
+    }
 }
 @media (min-width: 724px) and (max-width: 1281px) {
     .info-container {
@@ -203,9 +211,18 @@
         padding-bottom: 37.5%;
     }
     .name{
-        font-size: 8vh;
+        font-size: 4vw;
     }
     .extension-info  p{
-        font-size: 6vh;
+        font-size: 2vw;
+        height: 57%;
+    }
+    .rating i {
+        font-size: 4vw;
+    }
+    .extensions-container > div{
+        min-height: calc(71vh - 12.6vw); 
+        padding-left: 7.5%;
+        text-align: left;
     }
 }
