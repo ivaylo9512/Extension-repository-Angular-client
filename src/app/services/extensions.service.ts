@@ -165,6 +165,78 @@ export class ExtensionsService {
     this.config.isLoading = false
   }
 
+  findUserExtensions = (pageSize : number) : Observable<Page> => {
+    let lastIdParam = this.config.totalItems ? this.totalExtensions[this.totalExtensions.length - 1].id : ''
+    
+    return this.httpClient.get<Page>(`/api/extensions/auth/findUserExtensions/${pageSize}/${lastIdParam}`)
+  }
+  findAllByPendings = (pageSize : number) : Observable<Page> => {
+    let lastIdParam = this.config.totalItems ? this.totalExtensions[this.totalExtensions.length - 1].id : ''
+    return this.httpClient.get<Page>(`/api/extensions/auth/findPending/true/${pageSize}/${lastIdParam}`)
+  }
+  findAllByTag = (pageSize : number) : Observable<Page> => {
+    let lastIdParam = this.config.totalItems ? this.totalExtensions[this.totalExtensions.length - 1].id : ''
+    return this.httpClient.get<Page>(`/api/extensions/findByTag/${this.nameQuery}/${pageSize}/${lastIdParam}`)
+  }
+  findAllByName = (pageSize : number) : Observable<Page> => {
+    let params = new HttpParams()
+      .set('pageSize', pageSize.toString())
+
+    if(this.nameQuery){
+      params = params.set('name', this.nameQuery)
+    }
+    if(this.config.totalItems){
+      params = params.set('lastName', this.totalExtensions[this.totalExtensions.length - 1].name)
+    }
+
+    return this.httpClient.get<Page>('/api/extensions/findAllByName', { params })
+  }
+  findAllByCommitDate = (pageSize : number) : Observable<Page> => {
+    let params = new HttpParams()
+      .set('pageSize', pageSize.toString())
+
+    if(this.nameQuery){
+      params = params.set('name', this.nameQuery)
+    }
+
+    if(this.config.totalItems){
+      params = params
+        .set('lastDate', this.totalExtensions[this.totalExtensions.length - 1].github.lastCommit)
+        .set('lastId', this.totalExtensions[this.totalExtensions.length - 1].id.toString())
+    }
+
+    return this.httpClient.get<Page>('/api/extensions/findAllByCommitDate', { params })
+  }
+  findAllByUploadDate = (pageSize : number) : Observable<Page> => {
+    let params = new HttpParams()
+      .set('pageSize', pageSize.toString())
+
+    if(this.nameQuery){
+      params = params.set('name', this.nameQuery)
+    }
+
+    if(this.config.totalItems){
+      params = params
+        .set('lastDate', this.totalExtensions[this.totalExtensions.length - 1].uploadDate)
+        .set('lastId', this.totalExtensions[this.totalExtensions.length - 1].id.toString())
+    }
+
+    return this.httpClient.get<Page>('/api/extensions/findAllByUploadDate', { params })
+  }
+  findAllByDownloads = (pageSize : number) : Observable<Page> => {
+    let params = new HttpParams()
+      .set('pageSize', pageSize.toString())
+
+    if(this.nameQuery){
+      params = params.set('name', this.nameQuery)
+    }
+
+    if(this.config.totalItems){
+      params = params
+        .set('lastDownloadCount', this.totalExtensions[this.totalExtensions.length - 1].timesDownloaded.toString())
+        .set('lastId', this.totalExtensions[this.totalExtensions.length - 1].id.toString())
+    }
+
     return this.httpClient.get<Page>('/api/extensions/findAllByDownloadCount', { params })
   }
   getFeatured() : Observable<Extension[]>{
