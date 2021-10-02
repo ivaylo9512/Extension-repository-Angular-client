@@ -29,7 +29,7 @@ export class DiscoverComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.subscribeToForm()
+    this.addSubscriptions()
     this.extensionsService.getAll(this.subscription)
   }
 
@@ -39,6 +39,7 @@ export class DiscoverComponent implements OnInit {
 
   changeCriteria(e){
     this.resetView()
+    this.addSubscriptions()
     this.extensionsService.orderBy = e.target.value
     this.extensionsService.getAll(this.subscription)
   }
@@ -55,6 +56,7 @@ export class DiscoverComponent implements OnInit {
     this.router.events.pipe(takeUntil(this.subscription)).subscribe((e: any) => {
       if (e instanceof NavigationEnd) {
         this.resetView()   
+        this.addSubscriptions()
         this.extensionsService.getAll(this.subscription)
       }
     })
@@ -63,11 +65,14 @@ export class DiscoverComponent implements OnInit {
   resetView(){
     this.subscription.next()
     this.subscription.complete()
-    this.subscription = new Subject<void>()
     this.extensionsService.resetExtensions()
     this.extensionsService.nameQuery = ''
     this.search.setValue('')
     this.extensionsService.orderBy = 'name'
+  }
+
+  addSubscriptions(){
+    this.subscription = new Subject<void>()
     this.subscribeToForm()
     this.subscribeToRoute()
   }

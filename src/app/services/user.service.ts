@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http'
+import { Observable } from 'rxjs';
 
 export interface User{
   id : number,
@@ -34,11 +35,11 @@ export class UserService {
 
   constructor(private httpClient : HttpClient) { }
 
-  getUser(id : number){
+  getUser(id : number) : Observable<User>{
     return this.httpClient.get<User>(`/api/users/findById/${id}`)
   }
 
-  findAll(pageSize : number, name : string, isActive? : boolean, lastName? : string){
+  findAll(pageSize : number, name : string, isActive? : boolean, lastName? : string) : Observable<Page>{
     let params = new HttpParams()
       .set('pageSize', pageSize.toString())
       .set('name', name);
@@ -54,26 +55,26 @@ export class UserService {
     return this.httpClient.get<Page>(`/api/users/auth/findAll`, { params })
   }
 
-  getGithubSettings(){
+  getGithubSettings() : Observable<Settings> {
     return this.httpClient.get<Settings>('/api/github/auth/getSettings')
   }
 
-  setGithubSettings(github){
-    return this.httpClient.post('/api/github/auth', github)
+  setGithubSettings(github) : Observable<Settings> {
+    return this.httpClient.post<Settings>('/api/github/auth/setSettings', github)
   }
 
-  setActive(id : number, isActive : boolean){
+  setActive(id : number, isActive : boolean) : Observable<User> {
     return this.httpClient.patch<User>(`/api/users/auth/setActive/${id}/${isActive}`, null)
   }
 
-  changePassword(password : string, repeatPassword : string){
-    this.httpClient.patch('/api/users/auth/changePassword',{
+  changePassword(password : string, repeatPassword : string) : Observable<User> {
+    return this.httpClient.patch<User>('/api/users/auth/changePassword',{
       password,
       repeatPassword
     })
   }
 
-  register(formData : FormData) {
+  register(formData : FormData) : Observable<User> {
     return this.httpClient.post<User>('/api/users/register', formData)
   }
 }

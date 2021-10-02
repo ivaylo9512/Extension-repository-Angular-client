@@ -7,8 +7,6 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-  @ViewChild('header') header: ElementRef
-
   constructor(private authService: AuthService) { 
   }
 
@@ -17,5 +15,4 @@ export class HeaderComponent implements OnInit {
   
   ngAfterViewInit(){
   }
-
 }

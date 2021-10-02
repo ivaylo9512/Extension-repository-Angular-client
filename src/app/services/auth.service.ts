@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { User } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,8 +28,8 @@ export class AuthService {
     }
   }
 
-  login(username, password) {
-    return this.httpClient.post('/api/users/login', {
+  login(username : string, password : string) : Observable<HttpResponse<User>> {
+    return this.httpClient.post<User>('/api/users/login', {
       username,
       password,
     },{

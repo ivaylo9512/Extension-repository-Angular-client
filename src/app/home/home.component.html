@@ -1,4 +1,4 @@
 <section profileScroll>
-    <app-fav-extensions></app-fav-extensions>
-    <app-profile class="home-view" *ngIf="this.authService.isLoggedIn"></app-profile>
+    <app-fav-extensions *ngIf="!wheelDirective.isMobile"></app-fav-extensions>
+    <app-profile class="home-view" *ngIf="authService.isLoggedIn"></app-profile>
 </section>

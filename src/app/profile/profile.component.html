@@ -1,5 +1,5 @@
 <section [ngClass]="{ 'fade-in' : this.profileAnimationService.isAnimated }" profileScroll class="profile-section" #profileSection>
-    <section [ngStyle]="{ 'min-height' : !user ? '100vh' : 'auto' }" class="user-profile">
+    <section [ngClass]="{ 'expanded' : isInfoToggled && !wheelDirective.isMobile }" [ngStyle]="{ 'min-height' : !user ? '100vh' : 'auto' }" class="user-profile">
         <span *ngIf="!user" class="loading-animation">
             <div>
                 <i class="fas fa-circle-notch fa-spin"></i>
@@ -10,7 +10,7 @@
             </div>
             <img [src]="baseUrl + 'api/files/download/' + user.profileImage" *ngIf="user && user.profileImage"/>
         </div>
-        <div *ngIf="user" [ngClass]="{ 'expanded' : isInfoToggled && !wheelDirective.isMobile }" class="user-info-container">
+        <div *ngIf="user" class="user-info-container">
             <h1>{{user.username}}</h1>
             <div class="user-info">
                 <h2>Extensions: {{user.totalExtensions}}</h2>
@@ -23,14 +23,14 @@
             </div>
         </div>
         <div class="circle-container">
-            <span [ngClass]="{'animate' : profileAnimationService.isAnimated}" [ngStyle]="{'transform': profileAnimationService.isAnimated && !wheelDirective.isMobile ? 'translateY(' + profileAnimationService.circleTransform / 10 + '%)' : wheelDirective.isMobile ? 'translate(-50%, -63%)' : 'translateY(90%)'}" class="circle" id="circle"></span>
+            <span [ngClass]="{'animate' : profileAnimationService.isAnimated, fixed: isInfoToggled}" [ngStyle]="{'transform': profileAnimationService.isAnimated && !wheelDirective.isMobile && !isInfoToggled ? 'translateY(' + profileAnimationService.circleTransform / 10 + '%)' : wheelDirective.isMobile ? '' : isInfoToggled ? 'translate(-50%, -75%)' : 'translateY(90%)'}" class="circle" id="circle"></span>
         </div>
         <button (click)="toggleInfo()" class="info-button">
             <i class="fas fa-info"></i>
         </button>
     </section>
     <section>
-        <span *ngIf="!extensionsService.totalExtensions" class="loading-animation">
+        <span *ngIf="profileAnimationService.isDisplayed && (extensionsService.config.totalItems == null || extensionsService.config.isLoading)" class="loading-animation">
             <div>
                 <i class="fas fa-circle-notch fa-spin"></i>
             </div>
