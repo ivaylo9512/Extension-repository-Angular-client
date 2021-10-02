@@ -1,5 +1,5 @@
 *:not(i){
-    font-family: "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
+    font-family: "Segoe UI";
 }
 section{
     height: 100vh;
@@ -283,12 +283,10 @@ section{
     display: flex;
 }
 .rating button{
-    padding: 0;
-    background: transparent;
-    border: 0;
-    padding: 3px;
     float: right;
-    cursor: pointer;
+    font-size: 2.3vw;
+    margin: 0 0.1vw;
+    text-shadow: 0px 0.05vw 0.4vw rgb(0 0 0 / 20%);
 }
 .current {
     color: #f6cd61;
@@ -301,9 +299,6 @@ section{
 }
 .rating button:hover ~ button {
     color: #f6cd61 !important;
-}
-.fa-star{
-    font-size: 2em;
 }
 
 .user-menu a{
@@ -330,7 +325,7 @@ section{
     float: left;
     padding: 4px 5px;
 }
-@media (max-width: 1200px) {
+@media (max-width: 1281px) {
     section{
         overflow: auto;
     }

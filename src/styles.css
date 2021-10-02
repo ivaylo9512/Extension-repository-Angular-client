@@ -3,7 +3,6 @@ Button{
 }
 pagination-template ul{
     text-align: center;
-    height: calc(1vw + 2vh);
     font-size: 2vh;
     margin-bottom: 2vh;
 }
@@ -71,24 +70,19 @@ pagination-template .next a::after{
     width: 5%;
 }
 .loading-animation div{
-    height: 5%;
-    margin: auto;
-    width: 5%;
     text-align: center;
-    font-size: 2em;
+    font-size: 5vh;
 }
 .loading-animation{
     width: 100%;
     height: 100%;
-    position: absolute;
     top: 0;
-    z-index: 4;
-    margin: 0;
+    position: absolute;
+    z-index: 8;
+    justify-content: center;
+    align-items: center;
     visibility: visible;
     background: #00000080;
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
     display: flex;
 }
 .loading-container:hover ~ input.error{
