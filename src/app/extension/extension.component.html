@@ -1,35 +1,43 @@
 <section extensionScroll>
-    <div class="cover" [ngStyle]="{'background-image':'url(' + baseUrl + 'api/files/download/' + extension.coverName + ')'}" *ngIf="extension.coverName && !wheelDirective.isMobile">
+    <span *ngIf="!extension" class="loading-animation">
+        <div>
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </div>
+    </span>
+    <div>
+        
+    </div>
+    <div class="cover" [ngStyle]="{'background-image':'url(' + baseUrl + 'api/files/download/' + extension.coverName + ')'}" *ngIf="extension?.coverName && !wheelDirective.isMobile">
     </div>
     <div #extensionSection [ngClass]="{'visible': !this.wheelDirective.isCoverPresent, 'fade-in': this.wheelDirective.currentSection != 'coverSection' }" class="extension-info">
         <div class="logo-container">
             <div class="hover-circle">
             </div>
             <div class="logo-box">
-                <img class="logo" [src]="baseUrl + 'api/files/download/' + extension.imageName" *ngIf="extension.imageName"/>
+                <img class="logo" [src]="baseUrl + 'api/files/download/' + extension.imageName" *ngIf="extension?.imageName"/>
             </div>
         </div>
         <div class="extension-info-container">
             <div class="extension-name">
-                <h1>{{extension.name}}</h1>
+                <h1>{{extension?.name}}</h1>
             </div>
             <div class="extension">
                 <div class="admin-menu">
                     <button><i class="fas fa-cog"></i></button> 
                     <button (click)="deleteExtension()"><i class="fas fa-trash-alt"></i></button> 
                     <button (click)="refreshGitHub()"><i class="fas fa-sync-alt"></i></button> 
-                    <button (click)="setFeatureState()" [ngStyle]="{'color': extension.featured ? 'orange' : 'black' }"><i class="fas fa-star"></i></button> 
-                    <button [routerLink]="['/edit', extension.id]"><i class="fas fa-edit"></i></button> 
-                    <button (click)="setPublishState()"><i *ngIf="extension.pending" class="fas fa-check"></i><i *ngIf="!extension.pending" class="fas fa-times"></i></button> 
+                    <button (click)="setFeatureState()" [ngStyle]="{'color': extension?.featured ? 'orange' : 'black' }"><i class="fas fa-star"></i></button> 
+                    <button [routerLink]="['/edit', extension?.id]"><i class="fas fa-edit"></i></button> 
+                    <button (click)="setPublishState()"><i class="fas fa-check"></i><i *ngIf="!extension?.pending" class="fas fa-times"></i></button> 
                 </div>
 
-                <h2>Rating: {{extension.rating}}</h2>
-                <h3>Owner: <a [routerLink]="['/profile', extension.ownerId]">{{extension.ownerName}}</a></h3>
+                <h2><i _ngcontent-eit-c2="" class="fas fa-star"></i>Rating: {{extension?.rating}}</h2>
+                <h3>Owner: <a *ngIf="extension" [routerLink]="['/profile', extension.ownerId]">{{extension?.ownerName}}</a></h3>
                 <h5>Info</h5>
                     
                 <div class="info">
                     <p #extensionDescription>
-                        {{extension.description}}
+                        {{extension?.description}}
                     </p>
                 </div>
             </div>
@@ -38,15 +46,15 @@
             <span [ngClass]="{'animate' : this.wheelDirective.currentSection != 'coverSection' }" class="circle"></span>
         </div>
         <div #slidingContainer [ngClass]="{'slide-in' : this.wheelDirective.currentSection == 'infoSection'}" class="sliding-info-container">
-            <div class="github-info">
+            <div *ngIf="extension" class="github-info">
                 <span>Pull requests</span>
                 <span>Open issues</span>
                 <span>Last commit</span>
-                <span>{{extension.pullRequests}}</span>
-                <span>{{extension.openIssues}}</span>
-                <span>{{extension.lastCommit | date : 'yyyy-MM-dd'}}</span>
+                <span>{{extension.github.pullRequests}}</span>
+                <span>{{extension.github.openIssues}}</span>
+                <span>{{extension.github.lastCommit | date : 'yyyy-MM-dd'}}</span>
             </div>
-            <div class="user-menu">
+            <div *ngIf="extension" class="user-menu">
                 <a [href]="baseUrl + 'api/files/download/' + extension.fileName"><i class="fas fa-download"></i>Download</a>
                 <div class="rating">
                     <div>
@@ -59,60 +67,10 @@
                 </div>
                 <a [href]="extension.gitHubLink"><i class="fab fa-github"></i>GitHub</a>
             </div>
-            <div class="tags">
+            <div *ngIf="extension" class="tags">
                 <a [routerLink]="['/tag', tag]" *ngFor="let tag of extension.tags">{{tag}}</a>
             </div>
             <span class="circle first"></span>
-        </div>
-    </div>
-    <div class="extension-info-container-mobile">
-        <div class="extension">
-            <h1>{{extension.name}}</h1>
-
-            <div class="admin-menu">
-                <button><i class="fas fa-cog"></i></button> 
-                <button (click)="deleteExtension()"><i class="fas fa-trash-alt"></i></button> 
-                <button (click)="refreshGitHub()"><i class="fas fa-sync-alt"></i></button> 
-                <button (click)="setFeatureState()" [ngStyle]="{'color': extension.featured ? 'orange' : 'black' }"><i class="fas fa-star"></i></button> 
-                <button [routerLink]="['/edit', extension.id]"><i class="fas fa-edit"></i></button> 
-                <button (click)="setPublishState()"><i *ngIf="extension.pending" class="fas fa-check"></i><i *ngIf="!extension.pending" class="fas fa-times"></i></button> 
-            </div>
-            
-            <h2>Rating: {{extension.rating}}</h2>
-            <h3>Owner: <a [routerLink]="['/profile', extension.ownerId]">{{extension.ownerName}}</a></h3>
-            <h5>Info</h5>
-                
-            <div class="info">
-                <p>
-                    {{extension.description}}
-                </p>
-            </div>
-        </div>
-    </div>
-    <div [ngClass]="{'slide-in' : this.wheelDirective.currentSection == 'infoSection'}" class="info-container">
-        <div class="tags">
-            <a [routerLink]="['/tag', tag]" *ngFor="let tag of extension.tags">{{tag}}</a>
-        </div>
-        <div class="user-menu">
-            <a [href]="extension.fileLocation"><i class="fas fa-download"></i>Download</a>
-            <div class="rating">
-                <div>
-                    <button (click)="rateExtension('5')" [ngClass]="{'current' : extension.currentUserRatingValue >= 5}"><i class="fas fa-star"></i></button>
-                    <button (click)="rateExtension('4')" [ngClass]="{'current' : extension.currentUserRatingValue >= 4}"><i class="fas fa-star"></i></button>
-                    <button (click)="rateExtension('3')" [ngClass]="{'current' : extension.currentUserRatingValue >= 3}"><i class="fas fa-star"></i></button>
-                    <button (click)="rateExtension('2')" [ngClass]="{'current' : extension.currentUserRatingValue >= 2}"><i class="fas fa-star"></i></button>
-                    <button (click)="rateExtension('1')" [ngClass]="{'current' : extension.currentUserRatingValue >= 1}"><i class="fas fa-star"></i></button>
-                </div>
-            </div>
-            <a [href]="extension.gitHubLink"><i class="fab fa-github"></i>GitHub</a>
-        </div>
-        <div class="github-info">
-            <span>Pull requests</span>
-            <span>Open issues</span>
-            <span>Last commit</span>
-            <span>{{extension.pullRequests}}</span>
-            <span>{{extension.openIssues}}</span>
-            <span>{{extension.lastCommit | date : 'yyyy-MM-dd'}}</span>
         </div>
     </div>
 </section>
