@@ -96,7 +96,7 @@ section{
 .info-button{
     position: absolute;
     left: 58.7%;
-    top: 50%;
+    top: 50vh;
     margin-top: -8%;
     font-size: 1.24vh;
     cursor: pointer;
@@ -146,16 +146,20 @@ h1{
 .user-info * {
     margin-top: 0.2vh;
 }
-.user-info-container.expanded {
+.user-profile.expanded{
+    height: auto;
+    padding-bottom: 2vh;
+}
+.user-profile.expanded .user-info-container {
     width: 100%;
     margin-top: 2vh;
     height: auto;
     float: none;
 }
-.user-info-container.expanded .user-info p{
+.user-profile.expanded .user-info-container .user-info p{
     height: auto;
 }
-.user-info-container.expanded .user-info{
+.user-profile.expanded .user-info-container .user-info{
     height: auto;
     padding: 0 12%;
 }
@@ -174,6 +178,14 @@ h1{
     transition: 5s;
     transform: translateZ(0) translateY(90%);
 }
+.profile-section .circle.fixed{
+    width: 130%;
+    padding-bottom: 130%;
+    left: 50%;
+    margin-left: 0;
+    top: 0;
+    bottom: unset;
+}
 .profile-section .circle.animate{
     transition: 5s;
     transform: translateZ(0) translateY(0%);
@@ -191,8 +203,6 @@ h1{
         position: relative;
     }
     .logo-container {
-        width: 30vh;
-        padding-bottom: 30vh;
         position: relative;
         transform: translateX(-50%);
         top: 0;
@@ -203,9 +213,6 @@ h1{
     } 
     .info-button{
         display: none;
-    }
-    .user-profile{
-        padding-top: 4vh;
     }
     .user-extensions .hover-circle{
         display: none;
@@ -231,6 +238,13 @@ h1{
     }
 }
 @media (min-width: 724px) and (max-width: 1281px) {
+    .user-profile{
+        padding-top: 18vh;
+    }
+    .logo-container {
+        width: 25%;
+        padding-bottom: 25%;
+    }
     .user-profile p{
         font-size: 3vw;
         font-weight: normal;
@@ -245,11 +259,20 @@ h1{
     .user-info h5{
         font-size: 10vh;
     }
+    .profile-section .circle.animate{
+        transform: translate(-50%, -73%);
+    }
 }
 @media (max-width: 724px){
+    .user-profile{
+        padding-top: 18vw;
+    }
     .logo-container{
-        width: 30%;
-        padding-bottom: 30%;
+        width: 40%;
+        padding-bottom: 40%;
+    }
+    .profile-section .circle.animate{
+        transform: translate(-50%, -33%);
     }
 }
 @keyframes fadeIn {
